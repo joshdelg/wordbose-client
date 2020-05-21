@@ -1,6 +1,8 @@
 import React from 'react';
 import './App.css';
 import { Grid, Typography } from "@material-ui/core";
+
+import Routes from "./Routes";
 import Header from "./components/Header";
 
 function App() {
@@ -13,7 +15,7 @@ function App() {
         <Grid item container>
           <Grid item xs={2}></Grid>
           <Grid item container xs={8}>
-            <Typography>This is where we change content according to the route</Typography>
+            <Routes />
           </Grid>
           <Grid item xs={2}></Grid>
         </Grid>
