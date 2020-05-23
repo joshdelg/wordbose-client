@@ -1,28 +1,36 @@
-import React, { useState } from "react";
-import { Grid, Button } from "@material-ui/core";
-import { Auth, API } from "aws-amplify";
+import React, { useEffect, useContext } from "react";
+import { Grid, Typography } from "@material-ui/core";
 import TranscriptList from "./TranscriptList";
+import { AuthContext } from "../contexts/AuthContext";
+import UnauthHome from "./UnauthHome";
+import { Auth } from "aws-amplify";
 
 function Home() {
 
-  const [transcripts, setTranscripts] = useState([]);
+  const { authData, dispatch } = useContext(AuthContext);
 
-  const handleClick = async() => {
-    const user = await Auth.signIn("admin@example.com", "Passw0rd!");
-    
-    const data = await API.get("transcripts", "/transcript");
-    console.log(data);
-    setTranscripts(data);
-  
-  }
+  useEffect(() => {
+    const onLoad = async() => {
+      try {
+        await Auth.currentSession();
+        dispatch({type: 'LOG_IN'});
+      } catch (e) {
+        if (e !== 'No current user') {
+          alert(e);
+        }
+      }
+    }
+
+    onLoad();
+  }, [dispatch]);
 
   return (
     <Grid container direction="column">
       <Grid item>
-        <Button onClick={handleClick}>Get Data</Button>
+        <Typography variant="h2">Your Transcripts</Typography>
       </Grid>
       <Grid item>
-        {transcripts && <TranscriptList transcripts={transcripts} />}
+        {(authData.isAuthenticated) ? <TranscriptList /> : <UnauthHome />}
       </Grid>
     </Grid>
   );
