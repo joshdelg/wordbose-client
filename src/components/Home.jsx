@@ -27,9 +27,6 @@ function Home() {
   return (
     <Grid container direction="column">
       <Grid item>
-        <Typography variant="h2">Your Transcripts</Typography>
-      </Grid>
-      <Grid item>
         {(authData.isAuthenticated) ? <TranscriptList /> : <UnauthHome />}
       </Grid>
     </Grid>
