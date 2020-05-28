@@ -7,14 +7,19 @@ function NewTranscriptDialog(props) {
 
   const [file, setFile] = useState("");
 
+  const formatFileName = (name) => {
+    return name.substring(0, name.lastIndexOf('.')).replace(/\W/g, "") + name.substring(name.lastIndexOf('.'));
+  };
+
   const onUpload = async () => {
     console.log(file);
     
     try {
-      const stored = await Storage.vault.put(file.name, file, {
+      const stored = await Storage.vault.put(formatFileName(file.name), file, {
         contentType: file.type
       });
       console.log(stored);
+      props.onClose();
     } catch(e) {
       alert(e);
     }

@@ -17,10 +17,11 @@ function NewTranscriptCard() {
 
   return (
     <>
-      <Card sytle={{textAlign: "center"}}>
-        <CardContent>
-          <Typography variant="h4">New Transcript</Typography>
-          <Button onClick={handleClickOpen}>+</Button>
+      <Card style={{height: "100%"}}>
+        <CardContent style={{padding: "0", height: "100%", justifyContent: "center", alignItems: "center"}}>
+          <Button variant="contained" color="primary" onClick={handleClickOpen} style={{width: "100%", height: "100%"}}>
+            <Typography variant="h1">+</Typography>
+          </Button>
         </CardContent>
       </Card>
       <NewTranscriptDialog open={open} onClose={handleClose} />

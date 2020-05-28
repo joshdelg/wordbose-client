@@ -7,6 +7,7 @@ import { AuthContext } from "../contexts/AuthContext";
 
 function Login() {
 
+  const [isLoading, setIsLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -15,10 +16,11 @@ function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      setIsLoading(true);
       const user = await Auth.signIn(email, password);
       alert("Signed In!");
+      setIsLoading(false);
       dispatch({type: 'LOG_IN'});
-
     } catch (err) {
       alert(err);
     }
@@ -31,7 +33,7 @@ function Login() {
           <br />
           <TextField type="password" className="formItem" label="Password" value={password} onChange={(e) => setPassword(e.target.value)}/>
           <br />
-          <Button className="formItem" variant="contained" color="primary" type="submit">Submit</Button>
+          <Button disabled={isLoading} className="formItem" variant="contained" color="primary" type="submit">Submit</Button>
       </form>
     </div>
   );
