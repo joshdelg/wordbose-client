@@ -1,9 +1,26 @@
 import React, { useState, useContext } from "react";
-import { TextField, Button } from "@material-ui/core";
-import "./Login.css";
+import { TextField, Button, makeStyles } from "@material-ui/core";
 
 import { Auth } from "aws-amplify";
 import { AuthContext } from "../contexts/AuthContext";
+import { useHistory } from "react-router-dom";
+
+const useStyles = makeStyles({
+  formContainer: {
+    width: "100%",
+    padding: "10%",
+    margin: "auto"
+  },
+  loginForm: {
+    display: "flex",
+    flexDirection: "column",
+    margin: "auto",
+    maxWidth: "500px"
+  },
+  formItem: {
+    margin: "10px"
+  }
+});
 
 function Login() {
 
@@ -13,6 +30,10 @@ function Login() {
 
   const { dispatch } = useContext(AuthContext);
 
+  const classes = useStyles();
+
+  let history = useHistory();
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -21,19 +42,18 @@ function Login() {
       alert("Signed In!");
       setIsLoading(false);
       dispatch({type: 'LOG_IN'});
+      history.push("/");
     } catch (err) {
       alert(err);
     }
   }
 
   return (
-    <div className="formContainer">
-      <form className="loginForm" onSubmit={handleSubmit}>
-          <TextField className="formItem" label="Email" value={email} onChange={(e) => setEmail(e.target.value)}/>
-          <br />
-          <TextField type="password" className="formItem" label="Password" value={password} onChange={(e) => setPassword(e.target.value)}/>
-          <br />
-          <Button disabled={isLoading} className="formItem" variant="contained" color="primary" type="submit">Submit</Button>
+    <div className={classes.formContainer}>
+      <form className={classes.loginForm} onSubmit={handleSubmit}>
+          <TextField className={classes.formItem} label="Email" value={email} onChange={(e) => setEmail(e.target.value)}/>
+          <TextField type="password" className={classes.formItem} label="Password" value={password} onChange={(e) => setPassword(e.target.value)}/>
+          <Button disabled={isLoading} className={classes.formItem} variant="contained" color="primary" type="submit">Submit</Button>
       </form>
     </div>
   );

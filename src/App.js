@@ -1,12 +1,9 @@
-import React, { useContext, useEffect } from 'react';
-import './App.css';
+import React from 'react';
 import { Grid } from "@material-ui/core";
 
 import Routes from "./Routes";
 import Header from "./components/Header";
 import AuthContextProvider from "./contexts/AuthContext";
-import { AuthContext } from "./contexts/AuthContext";
-import { Auth } from "aws-amplify";
 
 function App() {
 
