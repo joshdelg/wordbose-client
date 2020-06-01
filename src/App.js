@@ -15,11 +15,11 @@ function App() {
             <Header />
           </Grid>
           <Grid item container>
-            <Grid item xs={2}></Grid>
-            <Grid item container xs={8}>
+            <Grid item xs={1} sm={2}></Grid>
+            <Grid item container xs={10} sm={8}>
               <Routes />
             </Grid>
-            <Grid item xs={2}></Grid>
+            <Grid item xs={1} sm={2}></Grid>
           </Grid>
         </Grid>
       </div>

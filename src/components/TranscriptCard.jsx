@@ -1,19 +1,27 @@
-import React from "react";
+import React, { useState } from "react";
 import { Card, CardContent, Typography, CardActions, Button, makeStyles} from "@material-ui/core";
 import moment from "moment";
 import { Link } from "react-router-dom";
+import { API } from "aws-amplify";
 
 const useStyles = makeStyles({
   transcriptContainer: {
-    height: "100%"
+    height: "100%",
+    display: "flex",
+    flexDirection: "column"
   },
   transcriptContent: {
-    height: "65%"
-  }
+    flexGrow: "1"
+  },
+  actionsContainer: {
+    display: "flex",
+    justifyContent: "space-between"
+  },
 });
 
 function TranscriptCard(props) {
 
+  const [isDeleting, setIsDeleting] = useState(false);
   const classes = useStyles();
 
   const formatDate = (date) => {
@@ -31,6 +39,18 @@ function TranscriptCard(props) {
     return (transcript.length > 100) ? transcript.substring(0, 97) + "..." : transcript;
   }
 
+  const handleDelete = async() => {
+    setIsDeleting(true);
+
+    try {
+      API.del("transcripts", `/transcript/${props.t.transcriptId}`);
+    } catch(err) {
+      alert(err);
+    }
+
+    setIsDeleting(false);
+  }
+
   return (
     <Card className={classes.transcriptContainer}>
       <CardContent className={classes.transcriptContent}>
@@ -38,12 +58,15 @@ function TranscriptCard(props) {
         <Typography variant="subtitle2">{formatDate(props.t.date)}</Typography>
         {props.t.transcript && <Typography variant="body1">{formatTranscript(props.t.transcript)}</Typography>}
       </CardContent>
-      <CardActions>
+      <CardActions className={classes.actionsContainer}>
         {
           //TODO make link go to actual edit url
         }
-        <Button component={Link} to={`/${props.t.transcriptId}`}>
+        <Button className={classes.editButton} disabled={isDeleting} color="primary" variant="contained" component={Link} to={`/${props.t.transcriptId}`}>
           Edit
+        </Button>
+        <Button disabled={isDeleting} color="secondary" variant="outlined" onClick={handleDelete}>
+          Delete
         </Button>
       </CardActions>
     </Card>

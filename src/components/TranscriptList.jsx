@@ -17,19 +17,25 @@ function TranscriptList(props) {
 
   const classes = useStyles();
   
-  useEffect(() => {
-    const getTranscripts = async() => {
+  const getTranscripts = async() => {
+    console.log("fetching transcripts");
+    try {
       const data = await API.get("transcripts", "/transcript");
       setTranscripts(data);
+    } catch (e) {
+      alert(e);
     }
+  }
+
+  useEffect(() => {
 
     getTranscripts();
     setIsLoading(false);
-  
+
   }, []);
 
   return (
-    <>
+    <div className="transcript-list">
       <Typography className={classes.heading} variant="h2">Your Transcripts</Typography>
       <Grid item container spacing={2}>
         <Grid item xs={12} sm={6} md={4}>
@@ -42,7 +48,7 @@ function TranscriptList(props) {
         </Grid>
       ))}
       </Grid>
-    </>
+    </div>
   );
 
 }

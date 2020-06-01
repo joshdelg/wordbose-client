@@ -34,18 +34,26 @@ function Login() {
 
   let history = useHistory();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const attemptSignIn = async () => {
+
+    setIsLoading(true);
+
     try {
-      setIsLoading(true);
-      const user = await Auth.signIn(email, password);
+      await Auth.signIn(email, password);
       alert("Signed In!");
-      setIsLoading(false);
       dispatch({type: 'LOG_IN'});
       history.push("/");
     } catch (err) {
-      alert(err);
+      alert(err.message);
     }
+
+    setIsLoading(false);
+  }
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    attemptSignIn();
   }
 
   return (
