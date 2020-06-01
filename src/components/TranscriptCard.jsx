@@ -43,11 +43,12 @@ function TranscriptCard(props) {
     setIsDeleting(true);
 
     try {
-      API.del("transcripts", `/transcript/${props.t.transcriptId}`);
+      await API.del("transcripts", `/transcript/${props.t.transcriptId}`);
+      props.setTranscripts(props.transcripts.filter((val) => (val.transcriptId !== props.t.transcriptId)));
     } catch(err) {
       alert(err);
     }
-
+  
     setIsDeleting(false);
   }
 
