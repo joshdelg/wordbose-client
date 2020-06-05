@@ -1,9 +1,10 @@
 import React, { useState, useContext } from "react";
-import { TextField, Button, makeStyles } from "@material-ui/core";
-
+import { TextField, Button, makeStyles, Snackbar } from "@material-ui/core";
+import { Alert } from "@material-ui/lab";
 import { Auth } from "aws-amplify";
 import { AuthContext } from "../contexts/AuthContext";
 import { useHistory } from "react-router-dom";
+//import LoginSnackbar from "./LoginSnackbar";
 
 const useStyles = makeStyles({
   formContainer: {
@@ -27,6 +28,8 @@ function Login() {
   const [isLoading, setIsLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [open, setOpen] = useState(false);
+  const [loginState, setLoginState] = useState(null);
 
   const { dispatch } = useContext(AuthContext);
 
@@ -40,13 +43,14 @@ function Login() {
 
     try {
       await Auth.signIn(email, password);
-      alert("Signed In!");
+      //alert("Signed In!");
       dispatch({type: 'LOG_IN'});
-      history.push("/");
+      setLoginState(true);
     } catch (err) {
-      alert(err.message);
+      setLoginState(err.message);
     }
 
+    setOpen(true);
     setIsLoading(false);
   }
 
@@ -56,14 +60,26 @@ function Login() {
     attemptSignIn();
   }
 
+  const handleClose = () => {
+    setOpen(false);
+    if(loginState === true) history.push("/");
+  }
+
   return (
-    <div className={classes.formContainer}>
-      <form className={classes.loginForm} onSubmit={handleSubmit}>
-          <TextField className={classes.formItem} label="Email" value={email} onChange={(e) => setEmail(e.target.value)}/>
-          <TextField type="password" className={classes.formItem} label="Password" value={password} onChange={(e) => setPassword(e.target.value)}/>
-          <Button disabled={isLoading} className={classes.formItem} variant="contained" color="primary" type="submit">Submit</Button>
-      </form>
-    </div>
+    <>
+      <div className={classes.formContainer}>
+        <form className={classes.loginForm} onSubmit={handleSubmit}>
+            <TextField className={classes.formItem} label="Email" value={email} onChange={(e) => setEmail(e.target.value)}/>
+            <TextField type="password" className={classes.formItem} label="Password" value={password} onChange={(e) => setPassword(e.target.value)}/>
+            <Button disabled={isLoading} className={classes.formItem} variant="contained" color="primary" type="submit">Submit</Button>
+        </form>
+      </div>
+      <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+        <Alert severity={loginState === true ? "success" : "error"} onClose={handleClose}>
+          {loginState === true? "Login Successful!" : loginState}
+        </Alert>
+      </Snackbar>
+    </>
   );
 
 }

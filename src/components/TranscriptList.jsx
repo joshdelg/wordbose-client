@@ -39,12 +39,12 @@ function TranscriptList(props) {
       <Typography className={classes.heading} variant="h2">Your Transcripts</Typography>
       <Grid item container spacing={2}>
         <Grid item xs={12} sm={6} md={4}>
-          <NewTranscriptCard />
+          <NewTranscriptCard transcripts={transcripts} setTranscripts={setTranscripts}/>
         </Grid>
         {isLoading && <Typography>Loading...</Typography>}
         {transcripts && transcripts.map((t, i) => (
         <Grid key={i} item xs={12} sm={6} md={4}>
-          <TranscriptCard t={t} transcripts={transcripts} setTranscripts={setTranscripts}/>
+          <TranscriptCard t={t} setTranscripts={setTranscripts}/>
         </Grid>
       ))}
       </Grid>

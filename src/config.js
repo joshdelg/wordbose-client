@@ -12,5 +12,6 @@ export default {
     USER_POOL_ID: "us-west-2_nESb2pPau",
     APP_CLIENT_ID: "66hop45p3li7l19a35905o3ikt",
     IDENTITY_POOL_ID: "us-west-2:65b1d34e-0d44-4668-96f1-6a639fae1c6b"
-  }
+  },
+  TRANSCRIPT_CARD_TRUNCATION: 160
 };

@@ -3,6 +3,7 @@ import { Card, CardContent, Typography, CardActions, Button, makeStyles} from "@
 import moment from "moment";
 import { Link } from "react-router-dom";
 import { API } from "aws-amplify";
+import config from "../config";
 
 const useStyles = makeStyles({
   transcriptContainer: {
@@ -35,29 +36,36 @@ function TranscriptCard(props) {
   }
 
   const formatTranscript = (transcript) => {
-    // TODO make maxLength a parameter in config
-    return (transcript.length > 100) ? transcript.substring(0, 97) + "..." : transcript;
-  }
+    return transcript.length > config.TRANSCRIPT_CARD_TRUNCATION
+      ? transcript.substring(0, config.TRANSCRIPT_CARD_TRUNCATION - 3) + "..."
+      : transcript;
+  };
 
-  const handleDelete = async() => {
+  const handleDelete = async () => {
     setIsDeleting(true);
 
     try {
       await API.del("transcripts", `/transcript/${props.t.transcriptId}`);
-      props.setTranscripts(props.transcripts.filter((val) => (val.transcriptId !== props.t.transcriptId)));
-    } catch(err) {
+      props.setTranscripts(
+        props.transcripts.filter(
+          (val) => val.transcriptId !== props.t.transcriptId
+        )
+      );
+    } catch (err) {
       alert(err);
     }
-  
+    
     setIsDeleting(false);
-  }
+  };
 
   return (
     <Card className={classes.transcriptContainer}>
       <CardContent className={classes.transcriptContent}>
-        <Typography variant="h4">{props.t.transcriptName}</Typography>
+        <Typography noWrap variant="h4">{props.t.transcriptName}</Typography>
         <Typography variant="subtitle2">{formatDate(props.t.date)}</Typography>
-        {props.t.transcript && <Typography variant="body1">{formatTranscript(props.t.transcript)}</Typography>}
+        <Typography variant="body1">
+          {(props.t.transcript ? formatTranscript(props.t.transcript) : "No Transcript Data Yet")}
+        </Typography>
       </CardContent>
       <CardActions className={classes.actionsContainer}>
         {

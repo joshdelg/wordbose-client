@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-import { Card, CardContent, Typography, Button, Dialog,
-         DialogContent, DialogContentText, DialogActions, DialogTitle, makeStyles} from "@material-ui/core";
+import { Card, CardContent, Typography, Button, makeStyles} from "@material-ui/core";
 import NewTranscriptDialog from "./NewTranscriptDialog";
 
 const useStyles = makeStyles({
@@ -19,7 +18,7 @@ const useStyles = makeStyles({
   }
 });
 
-function NewTranscriptCard() {
+function NewTranscriptCard(props) {
 
   const [open, setOpen] = useState(false);
   
@@ -42,7 +41,11 @@ function NewTranscriptCard() {
           </Button>
         </CardContent>
       </Card>
-      <NewTranscriptDialog open={open} onClose={handleClose} />
+      <NewTranscriptDialog open={open} 
+        onClose={handleClose}
+        transcripts={props.transcripts}
+        setTranscripts={props.setTranscripts}
+      />
     </>
   );
 }
