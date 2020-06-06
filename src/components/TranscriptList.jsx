@@ -16,18 +16,18 @@ function TranscriptList(props) {
   const [transcripts, setTranscripts] = useState([]);
 
   const classes = useStyles();
-  
-  const getTranscripts = async() => {
-    console.log("fetching transcripts");
-    try {
-      const data = await API.get("transcripts", "/transcript");
-      setTranscripts(data);
-    } catch (e) {
-      alert(e);
-    }
-  }
 
   useEffect(() => {
+
+    const getTranscripts = async() => {
+      console.log("Fetching transcripts");
+      try {
+        const data = await API.get("transcripts", "/transcript");
+        setTranscripts(data);
+      } catch (e) {
+        alert(e);
+      }
+    }
 
     getTranscripts();
     setIsLoading(false);

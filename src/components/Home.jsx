@@ -7,22 +7,7 @@ import { Auth } from "aws-amplify";
 
 function Home() {
 
-  const { authData, dispatch } = useContext(AuthContext);
-
-  useEffect(() => {
-    const onLoad = async() => {
-      try {
-        await Auth.currentSession();
-        dispatch({type: 'LOG_IN'});
-      } catch (e) {
-        if (e !== 'No current user') {
-          alert(e);
-        }
-      }
-    }
-
-    onLoad();
-  }, [dispatch]);
+  const { authData } = useContext(AuthContext);
 
   return (
     <Grid container direction="column">

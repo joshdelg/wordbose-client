@@ -3,11 +3,11 @@ import ReactDOM from 'react-dom';
 import { BrowserRouter as Router } from 'react-router-dom';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
-
 import Amplify from 'aws-amplify';
 import config from './config';
+import AuthContextProvider from "./contexts/AuthContext";
 
-// Configure Amplify
+// Configure Amplify (yikes)
 Amplify.configure({
   Auth: {
     mandatorySignIn: true,
@@ -35,7 +35,9 @@ Amplify.configure({
 ReactDOM.render(
   <React.StrictMode>
     <Router>
-      <App />
+      <AuthContextProvider>
+        <App />
+      </AuthContextProvider>
     </Router>
   </React.StrictMode>,
   document.getElementById('root')

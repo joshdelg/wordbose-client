@@ -1,14 +1,30 @@
-import React from 'react';
+import React, { useContext, useEffect } from 'react';
 import { Grid } from "@material-ui/core";
-
 import Routes from "./Routes";
 import Header from "./components/Header";
-import AuthContextProvider from "./contexts/AuthContext";
+import { AuthContext } from './contexts/AuthContext';
+import { Auth } from "aws-amplify";
 
 function App() {
 
+  const { dispatch } = useContext(AuthContext);
+
+  useEffect(() => {
+    const onLoad = async() => {
+      try {
+        await Auth.currentSession();
+        dispatch({type: 'LOG_IN'});
+      } catch (e) {
+        if (e !== 'No current user') {
+          alert(e);
+        }
+      }
+    }
+
+    onLoad();
+  }, [dispatch]);
+
   return (
-    <AuthContextProvider>
       <div className="App">
         <Grid container direction="column">
           <Grid item>
@@ -23,7 +39,6 @@ function App() {
           </Grid>
         </Grid>
       </div>
-    </AuthContextProvider>
   );
 }
 

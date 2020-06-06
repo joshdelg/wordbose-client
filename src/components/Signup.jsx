@@ -1,12 +1,33 @@
 import React, { useState } from "react";
-import { TextField, Button } from "@material-ui/core";
+import { TextField, Button, makeStyles } from "@material-ui/core";
 import { Auth } from "aws-amplify";
+
+const useStyles = makeStyles({
+  formContainer: {
+    width: "100%",
+    padding: "10%",
+    margin: "auto"
+  },
+  flexForm: {
+    display: "flex",
+    flexDirection: "column",
+    margin: "auto",
+    maxWidth: "500px"
+  },
+  formItem: {
+    margin: "10px",
+    width: "100%"
+  }
+});
 
 function Signup() {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [code, setCode] = useState("");
+  const [step, setStep] = useState(1);
+
+  const classes = useStyles();
 
   const onSubmit = async (e) => {
     e.preventDefault();
@@ -21,6 +42,9 @@ function Signup() {
       alert(e.message);
     }
 
+
+    // Move to confirmation stage
+    setStep(2);
   };
 
   const submitCode = async (e) => {
@@ -35,18 +59,29 @@ function Signup() {
     }
   };
 
+  const renderSignInForm = () => {
+    return (
+      <form className={classes.flexForm}>
+        <TextField className={classes.formItem} label="Email" value={email} onChange={(e) => setEmail(e.target.value)}/>
+        <TextField className={classes.formItem} label="Password" type="password" value={password} onChange={(e) => setPassword(e.target.value)}/>
+        <Button className={classes.formItem} variant="contained" color="primary" onClick={onSubmit}>Submit</Button>
+      </form>
+    );
+  };
+
+  const renderConfirmationForm = () => {
+    return (
+      <form className={classes.flexForm}>
+        <TextField className={classes.formItem} label="Confirmation Code" value={code} onChange={(e) => setCode(e.target.value)}/>
+        <Button className={classes.formItem} variant="contained" color="primary" onClick={submitCode}>Submit Code</Button>
+      </form>
+    );
+  };
+
   return (
-    <>
-      <form>
-        <TextField label="Email" value={email} onChange={(e) => setEmail(e.target.value)}/>
-        <TextField label="Password" type="password" value={password} onChange={(e) => setPassword(e.target.value)}/>
-        <Button onClick={onSubmit}>Submit</Button>
-      </form>
-      <form>
-        <TextField label="Confirmation Code" value={code} onChange={(e) => setCode(e.target.value)}/>
-        <Button onClick={submitCode}>Submit Code</Button>
-      </form>
-    </>
+    <div className={classes.formContainer}>
+      {step === 1 ? renderSignInForm() : renderConfirmationForm()}
+    </div>
   );
 }
 

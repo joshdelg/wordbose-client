@@ -19,6 +19,15 @@ function Header() {
   const classes = useStyles();
   let history = useHistory();
 
+  const renderUnauthButtons = () => {
+    return (
+      <>
+        <Button color="inherit" component={Link} to="/signup">Sign Up</Button> 
+        <Button color="inherit" component={Link} to="/login">Log In</Button> 
+      </>
+    )
+  };
+
   const handleSignOut = async() => {
     try {
       await Auth.signOut();
@@ -37,7 +46,7 @@ function Header() {
         {
           (authData.isAuthenticated)
           ? <Button color="inherit" onClick={handleSignOut}>Sign Out</Button> 
-          : <Button color="inherit" component={Link} to="/login">Log In</Button> 
+          : renderUnauthButtons()
         }
       </Toolbar>
     </AppBar>
