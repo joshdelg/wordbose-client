@@ -4,7 +4,7 @@ import { Alert } from "@material-ui/lab";
 import { Auth } from "aws-amplify";
 import { AuthContext } from "../contexts/AuthContext";
 import { useHistory } from "react-router-dom";
-//import LoginSnackbar from "./LoginSnackbar";
+import CustomSnackbar from "./CustomSnackbar";
 
 const useStyles = makeStyles({
   formContainer: {
@@ -69,16 +69,36 @@ function Login() {
     <>
       <div className={classes.formContainer}>
         <form className={classes.loginForm} onSubmit={handleSubmit}>
-            <TextField className={classes.formItem} label="Email" value={email} onChange={(e) => setEmail(e.target.value)}/>
-            <TextField type="password" className={classes.formItem} label="Password" value={password} onChange={(e) => setPassword(e.target.value)}/>
-            <Button disabled={isLoading} className={classes.formItem} variant="contained" color="primary" type="submit">Submit</Button>
+          <TextField
+            className={classes.formItem}
+            label="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+          <TextField
+            type="password"
+            className={classes.formItem}
+            label="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          <Button
+            disabled={isLoading}
+            className={classes.formItem}
+            variant="contained"
+            color="primary"
+            type="submit"
+          >
+            Submit
+          </Button>
         </form>
       </div>
-      <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
-        <Alert severity={loginState === true ? "success" : "error"} onClose={handleClose}>
-          {loginState === true? "Login Successful!" : loginState}
-        </Alert>
-      </Snackbar>
+      <CustomSnackbar
+        open={open}
+        onClose={handleClose}
+        severity={loginState === true ? "success" : "error"}
+        message={loginState === true ? "Login Successful!" : loginState}
+      />
     </>
   );
 
