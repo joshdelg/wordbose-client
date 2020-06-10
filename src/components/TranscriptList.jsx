@@ -44,7 +44,7 @@ function TranscriptList(props) {
         {isLoading && <Typography>Loading...</Typography>}
         {transcripts && transcripts.map((t, i) => (
         <Grid key={i} item xs={12} sm={6} md={4}>
-          <TranscriptCard t={t} setTranscripts={setTranscripts}/>
+          <TranscriptCard transcripts={transcripts} t={t} setTranscripts={setTranscripts}/>
         </Grid>
       ))}
       </Grid>

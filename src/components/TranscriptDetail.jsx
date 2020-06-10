@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { makeStyles, Typography, Paper, TextField } from "@material-ui/core";
+import { makeStyles, Typography, Paper, TextField, Button } from "@material-ui/core";
 import { API } from "aws-amplify";
+import moment from "moment";
 
 const useStyles = makeStyles({
   transcriptDetailContainer: {
@@ -10,19 +11,25 @@ const useStyles = makeStyles({
   heading: {
     margin: "16px 0px"
   },
-  transcriptContainer: {
-    padding: "1em",
+  transcriptHeaders: {
+    display: "flex",
+    alignItems: "flex-end",
+    padding: "0.25em"
+  },
+  transcriptTitle: {
+    flexGrow: "1"
+  },
+  transcriptPaper: {
+    padding: "0.5em",
     "&:hover": {
       background: "#eeeeee"
     }
   },
-  types: {
-    "&:hover": {
-      background: "#eeeeee"
-    }
-  },
-  transcriptForm: {
+  transcriptTextField: {
     width: "100%"
+  },
+  transcriptActionButtons: {
+    margin: "0.5em 0.5em 0.5em 0"
   }
 });
 
@@ -30,7 +37,8 @@ function TranscriptDetail() {
 
   const { transcriptId } = useParams();
   const [transcript, setTranscript] = useState({});
-  const [editing, setEditing] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [transcriptText, setTranscriptText] = useState("");
 
   const classes = useStyles();
 
@@ -50,29 +58,54 @@ function TranscriptDetail() {
 
   }, [transcriptId]);
 
+  const handleClick = () => {
+    setTranscriptText(transcript.transcript);
+    setIsEditing(true);
+  }
+
   const renderTranscriptPaper = () => (
-    <Paper className={classes.transcriptContainer} onClick={handleClick}>
+    <Paper className={classes.transcriptPaper} onClick={handleClick}>
       <Typography variant="body1">{transcript.transcript}</Typography>
     </Paper>
   );
 
-  const renderTranscriptForm = () => (
-    <TextField className={classes.transcriptForm} label="Transcript" multiline value={transcript.transcript}/>
-  );
-
-  const handleClick = () => {
-    setEditing(true);
+  const cancelChanges = () => {
+    setTranscriptText(transcript.transcript);
+    setIsEditing(false);
   }
+
+  const saveChanges = async() => {
+    setTranscript({...transcript, transcript: transcriptText});
+    try {
+      await API.put("transcripts", `/transcript/${transcriptId}`, {
+        body: {
+          transcriptName: transcript.transcriptName,
+          transcript: transcriptText
+        }
+      });
+    } catch (e) {
+      alert(e.message);
+    }
+    setTranscriptText(transcript.transcript);
+    setIsEditing(false);
+  }
+
+  const renderTranscriptForm = () => (
+    <>
+      <TextField className={classes.transcriptTextField} multiline value={transcriptText} onChange={(e) => setTranscriptText(e.target.value)}/>
+      <Button className={classes.transcriptActionButtons} color="secondary" variant="outlined" onClick={cancelChanges}>Cancel</Button>
+      <Button className={classes.transcriptActionButtons} color="primary" variant="contained" onClick={saveChanges}>Save</Button>
+    </>
+  );
 
   return (
     <div className={classes.transcriptDetailContainer}>
       <Typography className={classes.heading} variant="h2">Edit Your Transcript</Typography>
-      <Typography className={classes.types} variant="h4">{transcript.transcriptName}</Typography>
-      <Typography variant="subtitle2">{transcript.date}</Typography>
-      {
-        editing ? renderTranscriptForm() :  renderTranscriptPaper()
-        
-      }
+      <div className={classes.transcriptHeaders}>
+        <Typography className={classes.transcriptTitle} variant="h3">{transcript.transcriptName}</Typography>
+        <Typography variant="h4">{moment(transcript.date).format("MMMM Do YYYY")}</Typography>
+      </div>
+      {(isEditing) ? renderTranscriptForm() : renderTranscriptPaper() }
     </div>
   );
 }
