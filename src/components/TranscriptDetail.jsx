@@ -93,8 +93,8 @@ function TranscriptDetail() {
   const renderTranscriptForm = () => (
     <>
       <TextField className={classes.transcriptTextField} multiline value={transcriptText} onChange={(e) => setTranscriptText(e.target.value)}/>
-      <Button className={classes.transcriptActionButtons} color="secondary" variant="outlined" onClick={cancelChanges}>Cancel</Button>
       <Button className={classes.transcriptActionButtons} color="primary" variant="contained" onClick={saveChanges}>Save</Button>
+      <Button className={classes.transcriptActionButtons} color="secondary" variant="outlined" onClick={cancelChanges}>Cancel</Button>
     </>
   );
 
