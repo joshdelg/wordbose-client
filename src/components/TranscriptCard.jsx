@@ -14,6 +14,9 @@ const useStyles = makeStyles({
   transcriptContent: {
     flexGrow: "1"
   },
+  transcriptText: {
+    fontFamily: "serif"
+  },
   actionsContainer: {
     display: "flex",
     justifyContent: "space-between"
@@ -63,7 +66,7 @@ function TranscriptCard(props) {
       <CardContent className={classes.transcriptContent}>
         <Typography noWrap variant="h4">{props.t.transcriptName}</Typography>
         <Typography variant="subtitle2">{formatDate(props.t.date)}</Typography>
-        <Typography variant="body1">
+        <Typography className={classes.transcriptText} variant="body1">
           {(props.t.transcript ? formatTranscript(props.t.transcript) : "No Transcript Data Yet")}
         </Typography>
       </CardContent>
