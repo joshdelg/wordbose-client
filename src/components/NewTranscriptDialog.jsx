@@ -16,13 +16,20 @@ function NewTranscriptDialog(props) {
 
   const [file, setFile] = useState("");
   const [transcriptName, setTranscriptName] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const classes = useStyles();
 
   const formatFileName = (name) => {
     return name.substring(0, name.lastIndexOf('.')).replace(/\W/g, "") + name.substring(name.lastIndexOf('.'));
   };
 
+  const onFileSelect = (e) => {
+    setFile(e.target.files[0]);
+    if(!transcriptName) setTranscriptName(formatFileName(e.target.files[0].name));
+  }
+
   const onUpload = async () => {
+    setIsLoading(true);
     
     // Generate transciptId client side
     const transcriptId = uuidv4();
@@ -52,11 +59,12 @@ function NewTranscriptDialog(props) {
           transcriptId: newTranscript.transcriptId
       }]);
 
-      // Close dialog box
-      props.onClose();
     } catch (e) {
       alert(e);
     }
+    setIsLoading(false);
+    // Close dialog box
+    props.onClose();
   };
 
   return (
@@ -66,12 +74,12 @@ function NewTranscriptDialog(props) {
           <DialogContentText>Transcript Details</DialogContentText>
           <form className={classes.formContainer}>
             <TextField label="Transcript Name" value={transcriptName} onChange={(e) => setTranscriptName(e.target.value)}/>
-            <Input type="file" onChange={(e) => setFile(e.target.files[0])}/>
+            <Input type="file" onChange={onFileSelect}/>
           </form>
         </DialogContent>
         <DialogActions>
-          <Button color="primary" variant="outlined" onClick={props.onClose}>Close</Button>
-          <Button color="primary" variant="contained" onClick={onUpload}>Upload</Button>
+          <Button color="primary" variant="outlined" disabled={isLoading} onClick={props.onClose}>Close</Button>
+          <Button color="primary" variant="contained" disabled={isLoading} onClick={onUpload}>Upload</Button>
         </DialogActions>
     </Dialog>
   );
