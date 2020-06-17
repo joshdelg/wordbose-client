@@ -36,7 +36,6 @@ const useStyles = makeStyles({
     maxHeight: "50vh",
     oveflowX: "hidden",
     overflowY: "scroll",
-    fontFamily: "serif",
     fontSize: "1.2em"
   },
   transcriptTextField: {
@@ -45,7 +44,6 @@ const useStyles = makeStyles({
   transcriptTextFieldInput: {
     lineHeight: "1.5em",
     padding: "0.5em",
-    fontFamily: "serif",
     fontSize: "1.2em"
   },
   transcriptActionButtons: {

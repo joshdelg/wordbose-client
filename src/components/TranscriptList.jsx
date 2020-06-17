@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from "react";
-import { Grid, Typography, makeStyles } from "@material-ui/core";
+import { Grid, Typography, makeStyles, Switch, TableContainer, Table, Paper, TableHead, TableCell, TableBody, TableRow, FormControl, FormLabel, RadioGroup, FormControlLabel, Radio } from "@material-ui/core";
 import { API } from "aws-amplify";
 import NewTranscriptCard from "./NewTranscriptCard";
 import TranscriptCard from "./TranscriptCard";
 
 const useStyles = makeStyles({
-  heading: {
-    margin: "16px 0px"
+  header: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    padding: "16px 0px"
   }
 });
 
@@ -14,6 +17,7 @@ function TranscriptList(props) {
 
   const [isLoading, setIsLoading] = useState(true);
   const [transcripts, setTranscripts] = useState([]);
+  const [viewMode, setViewMode] = useState('card');
 
   const classes = useStyles();
 
@@ -34,20 +38,56 @@ function TranscriptList(props) {
 
   }, []);
 
+  const renderTranscriptCards = () => (
+    <Grid item container spacing={2}>
+      <Grid item xs={12} sm={6} md={4}>
+        <NewTranscriptCard transcripts={transcripts} setTranscripts={setTranscripts}/>
+      </Grid>
+      {isLoading && <Typography>Loading...</Typography>}
+      {transcripts && transcripts.map((t, i) => (
+      <Grid key={i} item xs={12} sm={6} md={4}>
+        <TranscriptCard transcripts={transcripts} t={t} setTranscripts={setTranscripts}/>
+      </Grid>
+    ))}
+    </Grid>
+  )
+
+  const renderTranscriptList = () => (
+    <TableContainer component={Paper}>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>Transcript Name</TableCell>
+              <TableCell>Transcript Preview</TableCell>
+              <TableCell>Transcript Date</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {transcripts && transcripts.map((t, i) => (
+              <TableRow hover key={i}>
+                <TableCell>{t.transcriptName}</TableCell>
+                <TableCell>{t.transcript.substring(0, 100)}</TableCell>
+                <TableCell>{t.date}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+  )
+
   return (
     <div className="transcript-list">
-      <Typography className={classes.heading} variant="h2">Your Transcripts</Typography>
-      <Grid item container spacing={2}>
-        <Grid item xs={12} sm={6} md={4}>
-          <NewTranscriptCard transcripts={transcripts} setTranscripts={setTranscripts}/>
-        </Grid>
-        {isLoading && <Typography>Loading...</Typography>}
-        {transcripts && transcripts.map((t, i) => (
-        <Grid key={i} item xs={12} sm={6} md={4}>
-          <TranscriptCard transcripts={transcripts} t={t} setTranscripts={setTranscripts}/>
-        </Grid>
-      ))}
-      </Grid>
+      <div className={classes.header}>
+        <Typography variant="h2">Your Transcripts</Typography>
+        <FormControl component="fieldset">
+          <FormLabel component="legend">View Mode</FormLabel>
+          <RadioGroup row value={viewMode} onChange={(e) => setViewMode(e.target.value)}>
+            <FormControlLabel value="card" control={<Radio />} label="Card View" />
+            <FormControlLabel value="list" control={<Radio />} label="List View" />
+          </RadioGroup>
+        </FormControl>
+      </div>
+      {viewMode === "card" ? renderTranscriptCards() : renderTranscriptList()}
     </div>
   );
 

@@ -15,7 +15,7 @@ const useStyles = makeStyles({
     maxWidth: "500px"
   },
   formItem: {
-    margin: "10px",
+    margin: "0.75em",
     width: "100%"
   }
 });

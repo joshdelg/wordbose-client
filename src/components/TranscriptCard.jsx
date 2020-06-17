@@ -14,9 +14,6 @@ const useStyles = makeStyles({
   transcriptContent: {
     flexGrow: "1"
   },
-  transcriptText: {
-    fontFamily: "serif"
-  },
   actionsContainer: {
     display: "flex",
     justifyContent: "space-between"
