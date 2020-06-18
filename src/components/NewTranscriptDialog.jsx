@@ -62,6 +62,7 @@ function NewTranscriptDialog(props) {
     } catch (e) {
       alert(e);
     }
+    setTranscriptName("");
     setIsLoading(false);
     // Close dialog box
     props.onClose();

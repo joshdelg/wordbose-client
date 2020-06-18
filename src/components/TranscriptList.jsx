@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { Grid, Typography, makeStyles, Switch, TableContainer, Table, Paper, TableHead, TableCell, TableBody, TableRow, FormControl, FormLabel, RadioGroup, FormControlLabel, Radio } from "@material-ui/core";
+import { Grid, Typography, makeStyles, Button, TableContainer, Table, Paper, TableHead, TableCell, TableBody, TableRow, FormControl, FormLabel, RadioGroup, FormControlLabel, Radio } from "@material-ui/core";
 import { API } from "aws-amplify";
 import NewTranscriptCard from "./NewTranscriptCard";
 import TranscriptCard from "./TranscriptCard";
+import TranscriptTable from "./TranscriptTable";
 
 const useStyles = makeStyles({
   header: {
@@ -52,29 +53,6 @@ function TranscriptList(props) {
     </Grid>
   )
 
-  const renderTranscriptList = () => (
-    <TableContainer component={Paper}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>Transcript Name</TableCell>
-              <TableCell>Transcript Preview</TableCell>
-              <TableCell>Transcript Date</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {transcripts && transcripts.map((t, i) => (
-              <TableRow hover key={i}>
-                <TableCell>{t.transcriptName}</TableCell>
-                <TableCell>{t.transcript.substring(0, 100)}</TableCell>
-                <TableCell>{t.date}</TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-  )
-
   return (
     <div className="transcript-list">
       <div className={classes.header}>
@@ -87,7 +65,7 @@ function TranscriptList(props) {
           </RadioGroup>
         </FormControl>
       </div>
-      {viewMode === "card" ? renderTranscriptCards() : renderTranscriptList()}
+      {viewMode === "card" ? renderTranscriptCards() : <TranscriptTable setTranscripts={setTranscripts} transcripts={transcripts} />}
     </div>
   );
 
