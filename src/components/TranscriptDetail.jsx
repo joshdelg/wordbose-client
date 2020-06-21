@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useParams } from "react-router-dom";
 import {
   makeStyles,
@@ -11,6 +11,8 @@ import {
 } from "@material-ui/core";
 import { API } from "aws-amplify";
 import moment from "moment";
+import { AuthContext } from "../contexts/AuthContext";
+import IncorrectUser from "./IncorrectUser";
 
 const useStyles = makeStyles({
   transcriptDetailContainer: {
@@ -60,6 +62,8 @@ function TranscriptDetail() {
   const theme = useTheme();
   const small = useMediaQuery(theme.breakpoints.down("sm"));
   const classes = useStyles();
+
+  const { authData } = useContext(AuthContext);
 
   useEffect(() => {
     const fetchTranscript = async () => {
@@ -143,7 +147,7 @@ function TranscriptDetail() {
     </>
   );
 
-  return (
+  const renderTranscriptDetail = () => (
     <div className={classes.transcriptDetailContainer}>
       <Typography className={classes.heading} variant="h2">
         Edit Your Transcript
@@ -166,6 +170,12 @@ function TranscriptDetail() {
       {isEditing ? renderTranscriptForm() : renderTranscriptPaper()}
     </div>
   );
+
+  return (
+    <>
+      {(authData.isAuthenticated && transcript) ? renderTranscriptDetail() : <IncorrectUser />}
+    </>
+  )
 }
 
 export default TranscriptDetail;

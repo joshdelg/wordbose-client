@@ -1,9 +1,17 @@
 import React, { useContext, useEffect } from 'react';
-import { Grid } from "@material-ui/core";
+import { Grid, createMuiTheme, ThemeProvider } from "@material-ui/core";
 import Routes from "./Routes";
 import Header from "./components/Header";
 import { AuthContext } from './contexts/AuthContext';
 import { Auth } from "aws-amplify";
+import { deepPurple, amber } from '@material-ui/core/colors';
+
+const globalTheme = createMuiTheme({
+  palette: {
+    primary: deepPurple,
+    secondary: amber
+  }
+});
 
 function App() {
 
@@ -25,6 +33,7 @@ function App() {
   }, [dispatch]);
 
   return (
+    <ThemeProvider theme={globalTheme}>
       <div className="App">
         <Grid container direction="column">
           <Grid item>
@@ -39,6 +48,7 @@ function App() {
           </Grid>
         </Grid>
       </div>
+    </ThemeProvider>
   );
 }
 

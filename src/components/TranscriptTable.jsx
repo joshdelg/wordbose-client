@@ -2,6 +2,7 @@ import React from "react";
 import { TableContainer, Table, TableHead, TableRow, TableCell, TableBody, Paper, Button, useTheme, useMediaQuery } from "@material-ui/core";
 import { API } from "aws-amplify";
 import { Link } from "react-router-dom";
+import moment from "moment";
 
 function TranscriptTable(props) {
 
@@ -10,6 +11,10 @@ function TranscriptTable(props) {
 
   const formatTranscript = (text) => {
     return (small) ? text.substring(0, 10) : text.substring(0, 100);
+  }
+
+  const formatDate = (date) => {
+    return moment(date).format("MMMM Do YYYY");
   }
 
   const handleDelete = async(transcriptId) => {
@@ -38,7 +43,7 @@ function TranscriptTable(props) {
               <TableRow style={{height: "10px"}} hover key={i}>
                 <TableCell>{formatTranscript(t.transcriptName)}</TableCell>
                 <TableCell>{t.transcript ? formatTranscript(t.transcript) : "No Transcript Data Yet"}</TableCell>
-                <TableCell>{t.date}</TableCell>
+                <TableCell>{formatDate(t.date)}</TableCell>
                 <TableCell>
                   <Button variant="contained" color="primary" component={Link} to={`/${t.transcriptId}`}>Edit</Button>
                 </TableCell>
