@@ -8,11 +8,14 @@ import {
   Button,
   useTheme,
   useMediaQuery,
+  IconButton
 } from "@material-ui/core";
+import { Create, Check, Clear } from "@material-ui/icons";
 import { API } from "aws-amplify";
 import moment from "moment";
 import { AuthContext } from "../contexts/AuthContext";
 import IncorrectUser from "./IncorrectUser";
+import EditName from "./EditName";
 
 const useStyles = makeStyles({
   transcriptDetailContainer: {
@@ -23,10 +26,12 @@ const useStyles = makeStyles({
   },
   transcriptHeaders: {
     display: "flex",
-    padding: "0.25em",
+    justifyContent: "space-between",
+    padding: "0.25em"
   },
-  transcriptTitle: {
-    flexGrow: "1",
+  titleAndButton: {
+    flex: "1",
+    display: "flex"
   },
   transcriptPaper: {
     padding: "0.5em",
@@ -160,10 +165,10 @@ function TranscriptDetail() {
             : { flexDirection: "row", alignItems: "flex-end" }
         }
       >
-        <Typography className={classes.transcriptTitle} variant="h3">
-          {transcript.transcriptName}
-        </Typography>
-        <Typography variant="h4">
+        <span className={classes.titleAndButton}>
+          <EditName transcript={transcript} setTranscript={setTranscript}/>
+        </span>
+        <Typography variant="h5">
           {moment(transcript.date).format("MMMM Do YYYY")}
         </Typography>
       </div>
