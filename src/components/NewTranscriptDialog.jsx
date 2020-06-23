@@ -97,7 +97,7 @@ function NewTranscriptDialog(props) {
           </form>
         </DialogContent>
         <DialogActions>
-          <Button color="primary" variant="outlined" disabled={isLoading} onClick={props.onClose}>Close</Button>
+          <Button color="secondary" variant="outlined" disabled={isLoading} onClick={props.onClose}>Close</Button>
           <Button color="primary" variant="contained" disabled={isLoading} onClick={onUpload}>Upload</Button>
         </DialogActions>
     </Dialog>

@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { Grid, Typography, makeStyles, Button, TableContainer, Table, Paper, TableHead, TableCell, TableBody, TableRow, FormControl, FormLabel, RadioGroup, FormControlLabel, Radio } from "@material-ui/core";
+import { Grid, Typography, makeStyles, FormControl, FormLabel, RadioGroup, FormControlLabel, Radio, TextField, Button, IconButton, InputAdornment } from "@material-ui/core";
 import { API } from "aws-amplify";
 import NewTranscriptCard from "./NewTranscriptCard";
 import TranscriptCard from "./TranscriptCard";
 import TranscriptTable from "./TranscriptTable";
+import { Search } from "@material-ui/icons";
 
 const useStyles = makeStyles({
   header: {
@@ -11,7 +12,15 @@ const useStyles = makeStyles({
     justifyContent: "space-between",
     alignItems: "center",
     padding: "16px 0px"
-  }
+  },
+  searchAndNew: {
+    display: "flex",
+    margin: "1em 0 1em 0"
+  },
+  searchbar: {
+    flex: "1",
+    margin: "0 1em 0 0"
+  },
 });
 
 function TranscriptList(props) {
@@ -41,9 +50,6 @@ function TranscriptList(props) {
 
   const renderTranscriptCards = () => (
     <Grid item container spacing={2}>
-      <Grid item xs={12} sm={6} md={4}>
-        <NewTranscriptCard transcripts={transcripts} setTranscripts={setTranscripts}/>
-      </Grid>
       {isLoading && <Typography>Loading...</Typography>}
       {transcripts && transcripts.map((t, i) => (
       <Grid key={i} item xs={12} sm={6} md={4}>
@@ -52,6 +58,11 @@ function TranscriptList(props) {
     ))}
     </Grid>
   )
+  
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    console.log("searching!");
+  }
 
   return (
     <div className="transcript-list">
@@ -64,6 +75,14 @@ function TranscriptList(props) {
             <FormControlLabel value="list" control={<Radio />} label="List View" />
           </RadioGroup>
         </FormControl>
+      </div>
+      <div className={classes.searchAndNew}>
+        <form className={classes.searchbar} onSubmit={handleSearchSubmit}>
+          <TextField fullWidth variant="outlined" label="Search Transcripts" InputProps={{
+            endAdornment: <InputAdornment position="end"><IconButton type="submit"><Search /></IconButton></InputAdornment>
+          }} />
+        </form>
+        <NewTranscriptCard className={classes.newButton} transcripts={transcripts} setTranscripts={setTranscripts}/>
       </div>
       {viewMode === "card" ? renderTranscriptCards() : <TranscriptTable setTranscripts={setTranscripts} transcripts={transcripts} />}
     </div>
