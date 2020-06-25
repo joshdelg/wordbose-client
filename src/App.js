@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { Grid, createMuiTheme, ThemeProvider } from "@material-ui/core";
 import Routes from "./Routes";
 import Header from "./components/Header";
@@ -16,6 +16,7 @@ const globalTheme = createMuiTheme({
 function App() {
 
   const { dispatch } = useContext(AuthContext);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const onLoad = async() => {
@@ -27,28 +28,33 @@ function App() {
           alert(e);
         }
       }
+      setIsLoading(false);
     }
 
     onLoad();
   }, [dispatch]);
 
   return (
-    <ThemeProvider theme={globalTheme}>
-      <div className="App">
-        <Grid container direction="column">
-          <Grid item>
-            <Header />
-          </Grid>
-          <Grid item container>
-            <Grid item xs={1} sm={2}></Grid>
-            <Grid item container xs={10} sm={8}>
-              <Routes />
+    <>
+      {(isLoading) ? <></> : (
+        <ThemeProvider theme={globalTheme}>
+          <div className="App">
+            <Grid container direction="column">
+              <Grid item>
+                <Header />
+              </Grid>
+              <Grid item container>
+                <Grid item xs={1} sm={2}></Grid>
+                <Grid item container xs={10} sm={8}>
+                  <Routes />
+                </Grid>
+                <Grid item xs={1} sm={2}></Grid>
+              </Grid>
             </Grid>
-            <Grid item xs={1} sm={2}></Grid>
-          </Grid>
-        </Grid>
-      </div>
-    </ThemeProvider>
+          </div>
+        </ThemeProvider>
+      )}
+    </>
   );
 }
 

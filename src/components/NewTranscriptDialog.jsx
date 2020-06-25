@@ -36,8 +36,9 @@ function NewTranscriptDialog(props) {
     }
   }
 
-  const onUpload = async () => {
-
+  const onUpload = async (e) => {
+    e.preventDefault();
+    
     if(validateForm()) {
 
       setIsLoading(true);
@@ -91,7 +92,7 @@ function NewTranscriptDialog(props) {
       <DialogTitle>New Transcript</DialogTitle>
         <DialogContent>
           <DialogContentText>Transcript Details</DialogContentText>
-          <form className={classes.formContainer}>
+          <form className={classes.formContainer} onSubmit={onUpload}>
             <TextField label="Transcript Name" value={transcriptName} onChange={(e) => setTranscriptName(e.target.value)}/>
             <Input type="file" onChange={onFileSelect}/>
           </form>

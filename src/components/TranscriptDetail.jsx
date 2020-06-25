@@ -7,10 +7,8 @@ import {
   TextField,
   Button,
   useTheme,
-  useMediaQuery,
-  IconButton
+  useMediaQuery
 } from "@material-ui/core";
-import { Create, Check, Clear } from "@material-ui/icons";
 import { API } from "aws-amplify";
 import moment from "moment";
 import { AuthContext } from "../contexts/AuthContext";

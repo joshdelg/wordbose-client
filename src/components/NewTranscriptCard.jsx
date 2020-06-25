@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Card, CardContent, Typography, Button, makeStyles, IconButton} from "@material-ui/core";
+import { Button } from "@material-ui/core";
 import NewTranscriptDialog from "./NewTranscriptDialog";
 import { Add } from "@material-ui/icons";
 
