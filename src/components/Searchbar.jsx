@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { TextField, InputAdornment, IconButton, makeStyles, Select, MenuItem } from "@material-ui/core";
 import { Search, Clear } from "@material-ui/icons";
 
@@ -22,11 +22,14 @@ function Searchbar(props) {
 
   const classes = useStyles();
 
-  const handleSearchSubmit = (e) => {
-    e.preventDefault();
+  /* For automatic querying
+  useEffect(() => {
+    if(isQuerying) {
+      query();
+    }
+  }, [searchCategory, searchQuery]); */
 
-    setIsQuerying(true);
-
+  const query = () => {
     if(originalTranscripts.length === 0) {
       setOriginalTranscripts(props.transcripts);
       const filtered = props.transcripts.filter((t) => {
@@ -57,6 +60,13 @@ function Searchbar(props) {
     }
   }
 
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+
+    setIsQuerying(true);
+    query(); 
+  }
+
   const handleClearQuery = () => {
     setIsQuerying(false);
     props.setTranscripts(originalTranscripts);
@@ -76,7 +86,7 @@ function Searchbar(props) {
             </Select>
           </InputAdornment>,
           endAdornment: <InputAdornment position="end"><IconButton type="submit"><Search /></IconButton></InputAdornment>
-        }} value={searchQuery} onChange={(e) => {setSearchQuery(e.target.value)}}/>
+        }} value={searchQuery} onChange={(e) => {setSearchQuery(e.target.value); /*For automatic querying: setIsQuerying(true);*/}}/>
       </form>
       {isQuerying && <IconButton className={classes.clearButton} variant="outlined" color="secondary" onClick={handleClearQuery}>
         <Clear />  

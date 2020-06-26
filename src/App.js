@@ -1,10 +1,11 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { Grid, createMuiTheme, ThemeProvider } from "@material-ui/core";
+import { Grid, createMuiTheme, ThemeProvider, Typography, Container } from "@material-ui/core";
 import Routes from "./Routes";
 import Header from "./components/Header";
 import { AuthContext } from './contexts/AuthContext';
 import { Auth } from "aws-amplify";
 import { deepPurple, amber } from '@material-ui/core/colors';
+import LoadingScreen from "./components/LoadingScreen";
 
 const globalTheme = createMuiTheme({
   palette: {
@@ -36,7 +37,8 @@ function App() {
 
   return (
     <>
-      {(isLoading) ? <></> : (
+      {(isLoading) ? <LoadingScreen />
+         : (
         <ThemeProvider theme={globalTheme}>
           <div className="App">
             <Grid container direction="column">
