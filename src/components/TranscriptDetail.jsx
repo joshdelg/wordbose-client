@@ -14,6 +14,7 @@ import moment from "moment";
 import { AuthContext } from "../contexts/AuthContext";
 import IncorrectUser from "./IncorrectUser";
 import EditName from "./EditName";
+import CustomBreadcrumbs from "./CustomBreadcrumbs";
 
 const useStyles = makeStyles({
   transcriptDetailContainer: {
@@ -152,6 +153,7 @@ function TranscriptDetail() {
 
   const renderTranscriptDetail = () => (
     <div className={classes.transcriptDetailContainer}>
+      <CustomBreadcrumbs steps={[{url: "/", text: "Wordbose"}]} final="Edit" />
       <Typography className={classes.heading} variant="h2">
         Edit Your Transcript
       </Typography>

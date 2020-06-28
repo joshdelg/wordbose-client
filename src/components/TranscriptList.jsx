@@ -5,6 +5,7 @@ import NewTranscriptCard from "./NewTranscriptCard";
 import TranscriptCard from "./TranscriptCard";
 import TranscriptTable from "./TranscriptTable";
 import Searchbar from "./Searchbar";
+import CustomBreadcrumbs from "./CustomBreadcrumbs";
 
 const useStyles = makeStyles({
   header: {
@@ -59,6 +60,7 @@ function TranscriptList(props) {
 
   return (
     <div className="transcript-list">
+      <CustomBreadcrumbs steps={[{url: "/", text: "Wordbose"}]} final="Home" />
       <div className={classes.header} style={(isSmall) ? {flexDirection: "column"} : {}}>
         <Typography variant="h2">Your Transcripts</Typography>
         <FormControl component="fieldset">

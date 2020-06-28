@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { TextField, Button, makeStyles } from "@material-ui/core";
 import { Auth } from "aws-amplify";
+import CustomBreadcrumbs from "./CustomBreadcrumbs";
 
 const useStyles = makeStyles({
   formContainer: {
@@ -79,9 +80,12 @@ function Signup() {
   };
 
   return (
-    <div className={classes.formContainer}>
-      {step === 1 ? renderSignInForm() : renderConfirmationForm()}
-    </div>
+    <>
+      <CustomBreadcrumbs steps={[{url: "/", text: "Wordbose"}]} final="Signup" />
+      <div className={classes.formContainer}>
+        {step === 1 ? renderSignInForm() : renderConfirmationForm()}
+      </div>
+    </>
   );
 }
 

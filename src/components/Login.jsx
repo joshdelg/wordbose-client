@@ -4,6 +4,7 @@ import { Auth } from "aws-amplify";
 import { AuthContext } from "../contexts/AuthContext";
 import { useHistory } from "react-router-dom";
 import CustomSnackbar from "./CustomSnackbar";
+import CustomBreadcrumbs from "./CustomBreadcrumbs";
 
 const useStyles = makeStyles({
   formContainer: {
@@ -65,6 +66,7 @@ function Login() {
 
   return (
     <>
+      <CustomBreadcrumbs steps={[{url: "/", text: "Wordbose"}]} final="Login" />
       <div className={classes.formContainer}>
         <form className={classes.loginForm} onSubmit={handleSubmit}>
           <TextField
