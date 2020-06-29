@@ -35,11 +35,11 @@ function Searchbar(props) {
       const filtered = props.transcripts.filter((t) => {
         switch(searchCategory) {
           case 'name':
-            return t.transcriptName.toLowerCase().indexOf(searchQuery.toLowerCase()) !== -1;
+            return t.transcriptName && (t.transcriptName.toLowerCase().indexOf(searchQuery.toLowerCase()) !== -1);
           case 'transcript':
-            return t.transcript.toLowerCase().indexOf(searchQuery.toLowerCase()) !== -1;
+            return t.transcript && (t.transcript.toLowerCase().indexOf(searchQuery.toLowerCase()) !== -1);
           default:
-            return t.transcriptName.toLowerCase().indexOf(searchQuery.toLowerCase()) !== -1;
+            return t.transcriptName && (t.transcriptName.toLowerCase().indexOf(searchQuery.toLowerCase()) !== -1);
         }
       });
       setFilteredTranscripts(filtered);
@@ -48,11 +48,11 @@ function Searchbar(props) {
       const filtered = originalTranscripts.filter((t) => {
         switch(searchCategory) {
           case 'name':
-            return t.transcriptName.toLowerCase().indexOf(searchQuery.toLowerCase()) !== -1;
+            return t.transcriptName && (t.transcriptName.toLowerCase().indexOf(searchQuery.toLowerCase()) !== -1);
           case 'transcript':
-            return t.transcript.toLowerCase().indexOf(searchQuery.toLowerCase()) !== -1;
+            return t.transcript && (t.transcript.toLowerCase().indexOf(searchQuery.toLowerCase()) !== -1);
           default:
-            return t.transcriptName.toLowerCase().indexOf(searchQuery.toLowerCase()) !== -1;
+            return t.transcriptName && (t.transcriptName.toLowerCase().indexOf(searchQuery.toLowerCase()) !== -1);
         }
       });
       setFilteredTranscripts(filtered);
