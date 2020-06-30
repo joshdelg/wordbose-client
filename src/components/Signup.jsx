@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { TextField, Button, makeStyles } from "@material-ui/core";
 import { Auth } from "aws-amplify";
 import CustomBreadcrumbs from "./CustomBreadcrumbs";
+import { useHistory } from "react-router-dom";
 
 const useStyles = makeStyles({
   formContainer: {
@@ -29,21 +30,18 @@ function Signup() {
   const [step, setStep] = useState(1);
 
   const classes = useStyles();
+  let history = useHistory();
 
   const onSubmit = async (e) => {
     e.preventDefault();
 
-    console.log(email, password);
-
     try {
       const user = await Auth.signUp({username: email, password: password});
-      console.log(user);
       alert("Sign Up Successful");
     } catch (e) {
       alert(e.message);
     }
-
-
+    
     // Move to confirmation stage
     setStep(2);
   };
@@ -55,6 +53,8 @@ function Signup() {
     try {
       await Auth.confirmSignUp(email, code);
       alert("Confirmation Successful");
+      // Redirect to Login Page
+      history.push("/login");
     } catch (e) {
       alert(e.message);
     }
