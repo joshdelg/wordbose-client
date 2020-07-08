@@ -23,7 +23,8 @@ function EditName(props) {
         await API.put("transcripts", `/transcript/${props.transcript.transcriptId}`, {
           body: {
             transcriptName: name,
-            transcript: props.transcript.transcript
+            transcript: props.transcript.transcript,
+            blocks: props.transcript.blocks || []
           }
         });
       } catch (e) {
@@ -45,7 +46,7 @@ function EditName(props) {
 
     return (
       <>
-        <TextField className={classes.nameTextField} label="Transcript Name" value={name} onChange={(e) => setName(e.target.value)}/>
+        <TextField className={classes.nameTextField} label="Transcript Name" variant="outlined" value={name} onChange={(e) => setName(e.target.value)}/>
         <IconButton onClick={saveChanges}>
           <Check color="primary"/>
         </IconButton>

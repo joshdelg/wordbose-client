@@ -3,9 +3,6 @@ import { useParams } from "react-router-dom";
 import {
   makeStyles,
   Typography,
-  Paper,
-  TextField,
-  Button,
   useTheme,
   useMediaQuery
 } from "@material-ui/core";
@@ -15,6 +12,8 @@ import { AuthContext } from "../contexts/AuthContext";
 import IncorrectUser from "./IncorrectUser";
 import EditName from "./EditName";
 import CustomBreadcrumbs from "./CustomBreadcrumbs";
+import TranscriptBlocks from "./TranscriptBlocks";
+import LegacyTranscriptView from "./LegacyTranscriptView";
 
 const useStyles = makeStyles({
   transcriptDetailContainer: {
@@ -31,37 +30,12 @@ const useStyles = makeStyles({
   titleAndButton: {
     flex: "1",
     display: "flex"
-  },
-  transcriptPaper: {
-    padding: "0.5em",
-    "&:hover": {
-      background: "#eeeeee",
-    }
-  },
-  transcriptText: {
-    maxHeight: "50vh",
-    oveflowX: "hidden",
-    overflowY: "scroll",
-    fontSize: "1.2em"
-  },
-  transcriptTextField: {
-    width: "100%",
-  },
-  transcriptTextFieldInput: {
-    lineHeight: "1.5em",
-    padding: "0.5em",
-    fontSize: "1.2em"
-  },
-  transcriptActionButtons: {
-    margin: "0.5em 0.5em 0.5em 0",
-  },
+  }
 });
 
 function TranscriptDetail() {
   const { transcriptId } = useParams();
   const [transcript, setTranscript] = useState({});
-  const [isEditing, setIsEditing] = useState(false);
-  const [transcriptText, setTranscriptText] = useState("");
 
   const theme = useTheme();
   const small = useMediaQuery(theme.breakpoints.down("sm"));
@@ -86,70 +60,38 @@ function TranscriptDetail() {
     fetchTranscript();
   }, [transcriptId]);
 
-  const handleClick = () => {
-    setTranscriptText(transcript.transcript);
-    setIsEditing(true);
-  };
 
-  const renderTranscriptPaper = () => (
-    <Paper className={classes.transcriptPaper} onClick={handleClick}>
-      <Typography className={classes.transcriptText} variant="body1">{transcript.transcript}</Typography>
-    </Paper>
-  );
+  const saveChanges = async (block, index) => {
 
-  const cancelChanges = () => {
-    setTranscriptText(transcript.transcript);
-    setIsEditing(false);
-  };
+    let newBlocks = transcript.blocks;
+    newBlocks[index] = block;
 
-  const saveChanges = async () => {
-    setTranscript({ ...transcript, transcript: transcriptText });
+    let newTranscript = newBlocks.reduce((acc, block) => acc + block.text + " ", "");
+    newTranscript = newTranscript.substring(0, newTranscript.length - 1);
+
+    setTranscript({ ...transcript, transcript: newTranscript, blocks: newBlocks });
     try {
       await API.put("transcripts", `/transcript/${transcriptId}`, {
         body: {
           transcriptName: transcript.transcriptName,
-          transcript: transcriptText,
+          transcript: newTranscript,
+          blocks: newBlocks
         },
       });
     } catch (e) {
       alert(e.message);
     }
-    setTranscriptText(transcript.transcript);
-    setIsEditing(false);
   };
 
-  const renderTranscriptForm = () => (
-    <>
-      <TextField
-        className={classes.transcriptTextField}
-        label="Transcript Text"
-        variant="outlined"
-        rows={12}
-        InputProps={{
-          className: classes.transcriptTextFieldInput
-        }}
-        multiline
-        value={transcriptText}
-        onChange={(e) => setTranscriptText(e.target.value)}
-      />
-      <Button
-        className={classes.transcriptActionButtons}
-        color="primary"
-        variant="contained"
-        onClick={saveChanges}
-      >
-        Save
-      </Button>
-      <Button
-        className={classes.transcriptActionButtons}
-        color="secondary"
-        variant="outlined"
-        onClick={cancelChanges}
-      >
-        Cancel
-      </Button>
-    </>
-  );
+  const renderTranscriptBlocks = () => {
+    if(transcript.blocks) {
+      return <TranscriptBlocks transcript={transcript} saveChanges={saveChanges}/>
+    }
+  }
+  
+  const renderLegacyView = () => (
+    <LegacyTranscriptView transcript={transcript} setTranscript={setTranscript}/>
+  )
 
   const renderTranscriptDetail = () => (
     <div className={classes.transcriptDetailContainer}>
@@ -172,7 +114,7 @@ function TranscriptDetail() {
           {moment(transcript.date).format("MMMM Do YYYY")}
         </Typography>
       </div>
-      {isEditing ? renderTranscriptForm() : renderTranscriptPaper()}
+      {(!transcript.blocks || transcript.blocks.length == 0) ? renderLegacyView() : renderTranscriptBlocks()}
     </div>
   );
 

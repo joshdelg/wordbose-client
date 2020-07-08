@@ -10,6 +10,9 @@ const useStyles = makeStyles({
     display: "flex",
     flexDirection: "column",
     height: "100%"
+  },
+  formItem: {
+    margin: "0.25em"
   }
 });
 
@@ -17,6 +20,7 @@ function NewTranscriptDialog(props) {
 
   const [file, setFile] = useState("");
   const [transcriptName, setTranscriptName] = useState("");
+  const [numSpeakers, setNumSpeakers] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const classes = useStyles();
 
@@ -51,6 +55,17 @@ function NewTranscriptDialog(props) {
     }
   }
 
+  const handleNumSpeakersChange = (e) => {
+    const num = e.target.value;
+    if(num < 1) {
+      setNumSpeakers(1);
+    } else if(num > 10) {
+      setNumSpeakers(10);
+    } else {
+      setNumSpeakers(num);
+    }
+  }
+
   const validateForm = () => {
     if(file && transcriptName) {
       return validateFileType(file) && validateFileSize(file);
@@ -81,7 +96,8 @@ function NewTranscriptDialog(props) {
             transcriptName: transcriptName,
             date: moment(),
             fileName: file.name,
-            email: user.attributes.email
+            email: user.attributes.email,
+            numSpeakers: numSpeakers
           }
         });
         
@@ -113,17 +129,47 @@ function NewTranscriptDialog(props) {
   return (
     <Dialog open={props.open} onClose={props.onClose}>
       <DialogTitle>New Transcript</DialogTitle>
-        <DialogContent>
-          <DialogContentText>Transcript Details</DialogContentText>
-          <form className={classes.formContainer} onSubmit={onUpload}>
-            <TextField label="Transcript Name" value={transcriptName} onChange={(e) => setTranscriptName(e.target.value)}/>
-            <Input type="file" onChange={onFileSelect}/>
-          </form>
-        </DialogContent>
-        <DialogActions>
-          <Button color="secondary" variant="outlined" disabled={isLoading} onClick={props.onClose}>Close</Button>
-          <Button color="primary" variant="contained" disabled={isLoading} onClick={onUpload}>Upload</Button>
-        </DialogActions>
+      <DialogContent>
+        <DialogContentText>Transcript Details</DialogContentText>
+        <form className={classes.formContainer} onSubmit={onUpload}>
+          <TextField
+            className={classes.formItem}
+            label="Transcript Name"
+            value={transcriptName}
+            onChange={(e) => setTranscriptName(e.target.value)}
+          />
+          <TextField
+            className={classes.formItem}
+            label="Maximum Number of Speakers"
+            type="number"
+            value={numSpeakers}
+            onChange={handleNumSpeakersChange}
+          />
+          <Input
+            className={classes.formItem}
+            type="file"
+            onChange={onFileSelect}
+          />
+        </form>
+      </DialogContent>
+      <DialogActions>
+        <Button
+          color="secondary"
+          variant="outlined"
+          disabled={isLoading}
+          onClick={props.onClose}
+        >
+          Close
+        </Button>
+        <Button
+          color="primary"
+          variant="contained"
+          disabled={isLoading}
+          onClick={onUpload}
+        >
+          Upload
+        </Button>
+      </DialogActions>
     </Dialog>
   );
 }
