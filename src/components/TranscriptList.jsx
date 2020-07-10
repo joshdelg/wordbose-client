@@ -48,7 +48,7 @@ function TranscriptList(props) {
   }, []);
 
   const renderTranscriptCards = () => (
-    <Grid item container spacing={2}>
+    <Grid container spacing={2}>
       {isLoading && <Typography>Loading...</Typography>}
       {transcripts.map((t, i) => (
       <Grid key={i} item xs={12} sm={6} md={4}>

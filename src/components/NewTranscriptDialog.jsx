@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button, Input, TextField, makeStyles} from "@material-ui/core";
+import React, { useState, useRef } from "react";
+import { Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button, Input, TextField, makeStyles, Typography} from "@material-ui/core";
 import { API, Storage, Auth } from "aws-amplify";
 import { v4 as uuidv4 } from "uuid";
 import moment from "moment";
@@ -22,6 +22,7 @@ function NewTranscriptDialog(props) {
   const [transcriptName, setTranscriptName] = useState("");
   const [numSpeakers, setNumSpeakers] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
+  const [fileDuration, setFileDuration] = useState(0);
   const classes = useStyles();
 
   const formatFileName = (name) => {
@@ -32,25 +33,36 @@ function NewTranscriptDialog(props) {
     return file.type.indexOf("audio") != -1 || file.type.indexOf("video") != -1;
   }
 
-  const validateFileSize = (file) => {
-    return file.size <= config.MAX_FILE_SIZE * 1024 * 1024;
+  const validateFileDuration = (file) => {
+    console.log("Duration:", fileDuration);
+    if(fileDuration <= config.MAX_FILE_DURATION) {
+      return true;
+    } else {
+      alert(`Please choose a file shorter than ${config.MAX_FILE_DURATION} seconds.`);
+      return false;
+    }
   }
 
   const onFileSelect = (e) => {
     // Check if file is of audio or video MIME type
     if(e.target.files[0]) {
       if(validateFileType(e.target.files[0])) {
-        if(validateFileSize(e.target.files[0])) {
-          setFile(e.target.files[0]);
-          if(!transcriptName) setTranscriptName(formatFileName(e.target.files[0].name));
-        } else {
-          alert(`Please select a file smaller than ${config.MAX_FILE_SIZE} MB`);
+        setFile(e.target.files[0]);
+        if(!transcriptName) setTranscriptName(formatFileName(e.target.files[0].name));
+
+        const player = document.createElement(e.target.files[0].type.substring(0, e.target.files[0].type.indexOf("/")));
+        player.preload = 'metadata';
+        player.onloadedmetadata = () => {
+          setFileDuration(player.duration);
         }
+        player.src = URL.createObjectURL(e.target.files[0]);
       } else {
         alert("Please select an audio or video file");
+        setFileDuration(0);
         setFile("");
       }
     } else {
+      setFileDuration(0);
       setFile("");
     }
   }
@@ -68,7 +80,7 @@ function NewTranscriptDialog(props) {
 
   const validateForm = () => {
     if(file && transcriptName) {
-      return validateFileType(file) && validateFileSize(file);
+      return validateFileType(file) && validateFileDuration(file);
     } else {
       return false;
     }
@@ -118,6 +130,8 @@ function NewTranscriptDialog(props) {
         alert(e);
       }
       setTranscriptName("");
+      setNumSpeakers(1);
+      setFileDuration(0);
       setIsLoading(false);
       // Close dialog box
       props.onClose();
@@ -150,7 +164,9 @@ function NewTranscriptDialog(props) {
             type="file"
             onChange={onFileSelect}
           />
+          {fileDuration != 0 && <Typography className={classes.formItem} variant="body1">{`Duration: ${Math.floor(fileDuration / 60)} minutes ${Math.round(fileDuration % 60)} seconds`}</Typography>}
         </form>
+        
       </DialogContent>
       <DialogActions>
         <Button

@@ -38,7 +38,7 @@ function TranscriptDetail() {
   const [transcript, setTranscript] = useState({});
 
   const theme = useTheme();
-  const small = useMediaQuery(theme.breakpoints.down("sm"));
+  const small = useMediaQuery(theme.breakpoints.down("md"));
   const classes = useStyles();
 
   const { authData } = useContext(AuthContext);
@@ -83,9 +83,30 @@ function TranscriptDetail() {
     }
   };
 
+  const saveSpeakerName = async(block) => {
+    const speakerId = block.speakerId;
+    const newName = block.speakerName;
+    const newBlocks = transcript.blocks.map((b) => (
+      (speakerId === b.speakerId) ? {...b, speakerName: newName} : b
+    ));
+
+    setTranscript({...transcript, blocks: newBlocks});
+    try {
+      await API.put("transcripts", `/transcript/${transcriptId}`, {
+        body: {
+          transcriptName: transcript.transcriptName,
+          transcript: transcript.transcript,
+          blocks: newBlocks
+        },
+      });
+    } catch (e) {
+      alert(e);
+    }
+  }
+
   const renderTranscriptBlocks = () => {
     if(transcript.blocks) {
-      return <TranscriptBlocks transcript={transcript} saveChanges={saveChanges}/>
+      return <TranscriptBlocks transcript={transcript} saveChanges={saveChanges} saveName={saveSpeakerName}/>
     }
   }
   
@@ -114,7 +135,7 @@ function TranscriptDetail() {
           {moment(transcript.date).format("MMMM Do YYYY")}
         </Typography>
       </div>
-      {(!transcript.blocks || transcript.blocks.length == 0) ? renderLegacyView() : renderTranscriptBlocks()}
+      {(!transcript.blocks || transcript.blocks.length === 0) ? renderLegacyView() : renderTranscriptBlocks()}
     </div>
   );
 

@@ -7,7 +7,7 @@ import moment from "moment";
 function TranscriptTable(props) {
 
   const theme = useTheme();
-  const small = useMediaQuery(theme.breakpoints.down("sm"));
+  const small = useMediaQuery(theme.breakpoints.down("md"));
 
   const formatTranscript = (text) => {
     return (small) ? text.substring(0, 10) : text.substring(0, 100);

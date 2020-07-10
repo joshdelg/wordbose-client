@@ -40,7 +40,7 @@ function App() {
       {(isLoading) ? <LoadingScreen />
          : (
         <ThemeProvider theme={globalTheme}>
-          <div className="App">
+          <div style={{overflow: "hidden"}} className="App">
             <Grid container direction="column">
               <Grid item>
                 <Header />

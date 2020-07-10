@@ -1,10 +1,10 @@
-import React, { useState } from "react";
-import { Typography, makeStyles, TextField, IconButton, useTheme, useMediaQuery } from "@material-ui/core";
+import React, { useState } from "react"
+import { Typography, makeStyles, TextField, useTheme, useMediaQuery, IconButton } from "@material-ui/core"
 import { Check, Clear } from "@material-ui/icons";
 
 const useStyles = makeStyles({
-  blockText: {
-    "&:hover": {
+  speakerLabel: {
+    '&:hover': {
       background: "#eeeeee"
     }
   },
@@ -23,32 +23,28 @@ const useStyles = makeStyles({
   }
 });
 
-function TranscriptBlockText(props) {
+function SpeakerLabel(props) {
 
   const [isEditing, setIsEditing] = useState(false);
-  const [originalText, setOriginalText] = useState(props.block.text);
-  const [fieldText, setFieldText] = useState(props.block.text);
+  const [originalName, setOriginalName] = useState(props.block.speakerName);
+  const [fieldText, setFieldText] = useState(props.block.speakerName);
 
   const theme = useTheme();
   const isSmall = useMediaQuery(theme.breakpoints.down('sm'));
   const classes = useStyles();
 
-  const handleClickText = (e) => {
-    setIsEditing(true);
-  }
-
-  const renderBlockText = () => (
-    <Typography variant="body1" className={classes.blockText} onClick={handleClickText}>{props.block.text}</Typography>
+  const renderSpeakerLabel = () => (
+    <Typography className={classes.speakerLabel} variant="h6" onClick={(e) => setIsEditing(true)}>{props.block.speakerName}</Typography>
   );
 
   const saveChanges = () => {
-    props.saveChanges({...props.block, text: fieldText}, props.index);
-    setOriginalText(fieldText);
+    props.saveName({...props.block, speakerName: fieldText})
+    setOriginalName(fieldText);
     setIsEditing(false);
   }
 
   const cancelChanges = () => {
-    setFieldText(originalText);
+    setFieldText(originalName);
     setIsEditing(false);
   }
 
@@ -66,13 +62,13 @@ function TranscriptBlockText(props) {
         </div>
       </div>
     );
-  };
+  }
 
   return (
     <>
-      {isEditing ? renderTextField() : renderBlockText()}
+      {isEditing ? renderTextField() : renderSpeakerLabel()}
     </>
   )
 }
 
-export default TranscriptBlockText;
+export default SpeakerLabel;
