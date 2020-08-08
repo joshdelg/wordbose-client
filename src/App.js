@@ -9,8 +9,15 @@ import LoadingScreen from "./components/LoadingScreen";
 
 const globalTheme = createMuiTheme({
   palette: {
-    primary: deepPurple,
-    secondary: amber
+    primary: {
+      main: '#311b92',
+    },
+    secondary: {
+      main: '#ffca28',
+    },
+  },
+  typography: {
+    fontFamily: '"Mulish", sans-serif;'
   }
 });
 

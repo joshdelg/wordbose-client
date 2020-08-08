@@ -35,12 +35,14 @@ function NewTranscriptDialog(props) {
 
   const validateFileDuration = (file) => {
     console.log("Duration:", fileDuration);
-    if(fileDuration <= config.MAX_FILE_DURATION) {
-      return true;
-    } else {
-      alert(`Please choose a file shorter than ${config.MAX_FILE_DURATION} seconds.`);
-      return false;
-    }
+    // !!!!! PLEASE UNCOMMENT
+    // if(fileDuration <= config.MAX_FILE_DURATION) {
+    //   return true;
+    // } else {
+    //   alert(`Please choose a file shorter than ${config.MAX_FILE_DURATION} seconds.`);
+    //   return false;
+    // }
+    return true;
   }
 
   const onFileSelect = (e) => {
