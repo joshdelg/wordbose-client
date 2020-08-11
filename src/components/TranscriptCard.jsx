@@ -64,7 +64,7 @@ function TranscriptCard(props) {
         <Typography noWrap variant="h4">{props.t.transcriptName}</Typography>
         <Typography variant="subtitle2">{formatDate(props.t.date)}</Typography>
         <Typography className={classes.transcriptText} variant="body1">
-          {(props.t.transcript ? formatTranscript(props.t.transcript) : "No Transcript Data Yet")}
+          {(props.t.transcript ? formatTranscript(props.t.transcript) : "You'll receive an email when your transcript is complete!")}
         </Typography>
       </CardContent>
       <CardActions className={classes.actionsContainer}>

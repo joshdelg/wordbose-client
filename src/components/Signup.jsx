@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { TextField, Button, makeStyles } from "@material-ui/core";
-import { Auth } from "aws-amplify";
+import { Auth, API } from "aws-amplify";
 import CustomBreadcrumbs from "./CustomBreadcrumbs";
 import { useHistory } from "react-router-dom";
+import { AuthContext } from "../contexts/AuthContext";
 
 const useStyles = makeStyles({
   formContainer: {
@@ -32,18 +33,30 @@ function Signup() {
   const classes = useStyles();
   let history = useHistory();
 
+  const { dispatch } = useContext(AuthContext);
+
   const onSubmit = async (e) => {
     e.preventDefault();
 
     try {
       const user = await Auth.signUp({username: email, password: password});
       alert("Sign Up Successful");
+      // Move to confirmation stage
+      setStep(2);
     } catch (e) {
-      alert(e.message);
+      if(e.code == "UsernameExistsException") {
+        // Move to confirmation stage
+        setStep(2);
+        alert('An account already exists with this email. Try logging in or requesting another confirmation code.');
+      } else {
+        alert(e.message);
+      }
     }
-    
-    // Move to confirmation stage
-    setStep(2);
+  };
+
+  const resendCode = async() => {
+    await Auth.resendSignUp(email);
+    alert('Confirmation code resent');
   };
 
   const submitCode = async (e) => {
@@ -51,12 +64,32 @@ function Signup() {
 
     console.log(email, code);
     try {
+      // Use confirmation code
       await Auth.confirmSignUp(email, code);
+
+      // Sign in user
+      await Auth.signIn(email, password);
+      dispatch({type: 'LOG_IN'});
+
+      // Make post request to update users table
+      await API.post("transcripts", "/newUser", {
+        body: {
+          email: email
+        }
+      });
+
       alert("Confirmation Successful");
-      // Redirect to Login Page
-      history.push("/login");
+
+      // Redirect to home page
+      history.push("/");
     } catch (e) {
-      alert(e.message);
+      if(e.message == "User cannot be confirmed. Current status is CONFIRMED") {
+        alert('User is already confirmed. Try logging in.');
+        history.push("/login");
+      } else {
+        console.log(e);
+        alert(e.message);
+      }
     }
   };
 
@@ -75,6 +108,7 @@ function Signup() {
       <form className={classes.flexForm}>
         <TextField className={classes.formItem} label="Confirmation Code" value={code} onChange={(e) => setCode(e.target.value)}/>
         <Button className={classes.formItem} variant="contained" color="primary" onClick={submitCode}>Submit Code</Button>
+        <Button className={classes.formItem} variant="text" color="secondary" onClick={resendCode}>Resend Confimation Code</Button>
       </form>
     );
   };
