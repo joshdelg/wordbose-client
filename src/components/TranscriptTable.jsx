@@ -45,7 +45,7 @@ function TranscriptTable(props) {
                 <TableCell>{t.transcript ? formatTranscript(t.transcript) : "No Transcript Data Yet"}</TableCell>
                 <TableCell>{formatDate(t.date)}</TableCell>
                 <TableCell>
-                  <Button variant="contained" color="primary" component={Link} to={`/${t.transcriptId}`}>Edit</Button>
+                  <Button variant="contained" color="primary" component={Link} to={`/${t.transcriptId}`}>View</Button>
                 </TableCell>
                 <TableCell>
                   <Button variant="outlined" color="secondary" onClick={() => handleDelete(t.transcriptId)}>Delete</Button>

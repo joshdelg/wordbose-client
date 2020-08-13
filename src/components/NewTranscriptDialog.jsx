@@ -4,6 +4,7 @@ import { API, Storage, Auth } from "aws-amplify";
 import { v4 as uuidv4 } from "uuid";
 import moment from "moment";
 import config from "../config";
+import Checkout from "./Checkout";
 
 const useStyles = makeStyles({
   formContainer: {
@@ -23,6 +24,8 @@ function NewTranscriptDialog(props) {
   const [numSpeakers, setNumSpeakers] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const [fileDuration, setFileDuration] = useState(0);
+  const [requiresPayment, setRequiresPayment] = useState(false);
+
   const classes = useStyles();
 
   const formatFileName = (name) => {
@@ -33,7 +36,7 @@ function NewTranscriptDialog(props) {
     return file.type.indexOf("audio") != -1 || file.type.indexOf("video") != -1;
   }
 
-  const validateFileDuration = (file) => {
+  const validateFileDuration = (fileDuration) => {
     console.log("Duration:", fileDuration);
     // !!!!! PLEASE UNCOMMENT
     // if(fileDuration <= config.MAX_FILE_DURATION) {
@@ -42,6 +45,13 @@ function NewTranscriptDialog(props) {
     //   alert(`Please choose a file shorter than ${config.MAX_FILE_DURATION} seconds.`);
     //   return false;
     // }
+    if(fileDuration > config.DURATION_FREE_THRESHOLD) {
+      setRequiresPayment(true);
+      console.log("File is", fileDuration, "which requires payment");
+    } else {
+      setRequiresPayment(false);
+      console.log("file is short enough so free");
+    }
     return true;
   }
 
@@ -52,10 +62,12 @@ function NewTranscriptDialog(props) {
         setFile(e.target.files[0]);
         if(!transcriptName) setTranscriptName(formatFileName(e.target.files[0].name));
 
+        // Determine audio duration
         const player = document.createElement(e.target.files[0].type.substring(0, e.target.files[0].type.indexOf("/")));
         player.preload = 'metadata';
         player.onloadedmetadata = () => {
           setFileDuration(player.duration);
+          validateFileDuration(player.duration);
         }
         player.src = URL.createObjectURL(e.target.files[0]);
       } else {
@@ -66,6 +78,7 @@ function NewTranscriptDialog(props) {
     } else {
       setFileDuration(0);
       setFile("");
+      setRequiresPayment(false);
     }
   }
 
@@ -82,19 +95,17 @@ function NewTranscriptDialog(props) {
 
   const validateForm = () => {
     if(file && transcriptName) {
-      return validateFileType(file) && validateFileDuration(file);
+      return validateFileType(file) && validateFileDuration(fileDuration);
     } else {
       return false;
     }
   }
 
-  const onUpload = async (e) => {
-    e.preventDefault();
-    
+  const uploadFile = async () => {
     if(validateForm()) {
 
       setIsLoading(true);
-      
+
       // Generate transciptId client side
       const transcriptId = uuidv4();
       const extension = file.name.substring(file.name.lastIndexOf('.'));
@@ -142,12 +153,38 @@ function NewTranscriptDialog(props) {
     }
   };
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if(fileDuration <= config.DURATION_FREE_THRESHOLD) {
+      uploadFile();
+    }
+  }
+
+  const handleClose = () => {
+
+    setFile("");
+    setTranscriptName("");
+    setNumSpeakers(1);
+    setIsLoading(false);
+    setFileDuration(0);
+    setRequiresPayment(false);
+
+    props.onClose();
+  }
+
+  const calculatePrice = () => {
+    const mins = Math.round(fileDuration / 60);
+    const chargedMins = mins - 15;
+    const cents = Math.max(chargedMins * 10, 50);
+    return cents / 100;
+  }
+
   return (
     <Dialog open={props.open} onClose={props.onClose}>
       <DialogTitle>New Transcript</DialogTitle>
       <DialogContent>
         <DialogContentText>Transcript Details</DialogContentText>
-        <form className={classes.formContainer} onSubmit={onUpload}>
+        <form className={classes.formContainer} onSubmit={handleSubmit}>
           <TextField
             className={classes.formItem}
             label="Transcript Name"
@@ -166,27 +203,32 @@ function NewTranscriptDialog(props) {
             type="file"
             onChange={onFileSelect}
           />
-          {fileDuration != 0 && <Typography className={classes.formItem} variant="body1">{`Duration: ${Math.floor(fileDuration / 60)} minutes ${Math.round(fileDuration % 60)} seconds`}</Typography>}
+          {fileDuration != 0 && 
+          <>
+            <Typography className={classes.formItem} variant="body1">{`Duration: ${Math.floor(fileDuration / 60)} minutes ${Math.round(fileDuration % 60)} seconds`}</Typography>
+            <Typography className={classes.formItem} variant="body1">{`Price: ${(fileDuration > (15 * 60)) ? "$" + calculatePrice() : "Free!"}`}</Typography>
+          </>}
         </form>
-        
+        {requiresPayment && <Checkout validateForm={validateForm} upload={uploadFile} fileDuration={fileDuration}/>}
       </DialogContent>
       <DialogActions>
         <Button
           color="secondary"
           variant="outlined"
           disabled={isLoading}
-          onClick={props.onClose}
+          onClick={handleClose}
         >
           Close
         </Button>
-        <Button
+        {!requiresPayment && 
+          <Button
           color="primary"
           variant="contained"
           disabled={isLoading}
-          onClick={onUpload}
+          onClick={handleSubmit}
         >
           Upload
-        </Button>
+        </Button>}
       </DialogActions>
     </Dialog>
   );

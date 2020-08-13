@@ -68,11 +68,8 @@ function TranscriptCard(props) {
         </Typography>
       </CardContent>
       <CardActions className={classes.actionsContainer}>
-        {
-          //TODO make link go to actual edit url
-        }
         <Button className={classes.editButton} disabled={isDeleting} color="primary" variant="contained" component={Link} to={`/${props.t.transcriptId}`}>
-          Edit
+          View
         </Button>
         <Button disabled={isDeleting} color="secondary" variant="outlined" onClick={handleDelete}>
           Delete

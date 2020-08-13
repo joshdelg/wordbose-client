@@ -14,5 +14,6 @@ export default {
     IDENTITY_POOL_ID: "us-west-2:65b1d34e-0d44-4668-96f1-6a639fae1c6b"
   },
   TRANSCRIPT_CARD_TRUNCATION: 160,
-  MAX_FILE_DURATION: 600
+  MAX_FILE_DURATION: (4 * 60 * 60), // 4 Hours
+  DURATION_FREE_THRESHOLD: (15 * 60) // 15 mins
 };

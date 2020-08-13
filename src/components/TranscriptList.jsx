@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { Grid, Typography, makeStyles, FormControl, FormLabel, RadioGroup, FormControlLabel, Radio, useMediaQuery, useTheme } from "@material-ui/core";
+import { Grid, Typography, makeStyles, FormControl, FormLabel, RadioGroup, FormControlLabel, Radio, useMediaQuery, useTheme, Button } from "@material-ui/core";
 import { API } from "aws-amplify";
-import NewTranscriptCard from "./NewTranscriptCard";
 import TranscriptCard from "./TranscriptCard";
 import TranscriptTable from "./TranscriptTable";
 import Searchbar from "./Searchbar";
 import CustomBreadcrumbs from "./CustomBreadcrumbs";
+import { Link } from "react-router-dom";
+import { Add } from "@material-ui/icons";
 
 const useStyles = makeStyles({
   header: {
@@ -73,7 +74,8 @@ function TranscriptList(props) {
       </div>
       <div className={classes.searchAndNew}>
         <Searchbar transcripts={transcripts} setTranscripts={setTranscripts}/>
-        <NewTranscriptCard className={classes.newButton} transcripts={transcripts} setTranscripts={setTranscripts}/>
+        {/*<NewTranscriptCard className={classes.newButton} transcripts={transcripts} setTranscripts={setTranscripts}/>*/}
+        <Button className={classes.newButton} component={Link} to="/new" variant="contained" color="primary" startIcon={<Add />}>New</Button>
       </div>
       {viewMode === "card" ? renderTranscriptCards() : <TranscriptTable setTranscripts={setTranscripts} transcripts={transcripts} />}
     </div>

@@ -2,27 +2,29 @@ import React, { useState } from "react";
 import { Button } from "@material-ui/core";
 import NewTranscriptDialog from "./NewTranscriptDialog";
 import { Add } from "@material-ui/icons";
+import { Link } from "react-router-dom";
 
 function NewTranscriptCard(props) {
 
-  const [open, setOpen] = useState(false);
+  // const [open, setOpen] = useState(false);
 
   const handleClickOpen = () => {
-    setOpen(true);
+    // setOpen(true);
+    
   };
 
-  const handleClose = () => {
+  /*const handleClose = () => {
     setOpen(false);
-  };
+  };*/
 
   return (
     <>
-      <Button onClick={handleClickOpen} variant="contained" color="primary" startIcon={<Add />}>New</Button>
-      <NewTranscriptDialog open={open} 
+      <Button component={Link} to="/new" variant="contained" color="primary" startIcon={<Add />}>New</Button>
+      {/*<NewTranscriptDialog open={open} 
         onClose={handleClose}
         transcripts={props.transcripts}
         setTranscripts={props.setTranscripts}
-      />
+  />*/}
     </>
   );
 }
