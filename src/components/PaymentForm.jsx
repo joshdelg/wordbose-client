@@ -29,6 +29,7 @@ function PaymentForm(props) {
     const [processing, setProcessing] = useState(false);
     const [error, setError] = useState("");
     const [clientSecret, setClientSecret] = useState("");
+    const [fetchAttempts, setFetchAttempts] = useState(0);
 
     const stripe = useStripe();
     const elements = useElements();
@@ -58,14 +59,21 @@ function PaymentForm(props) {
     };
 
     const calculatePrice = (fileDuration) => {
-        const mins = Math.round(fileDuration / 60);
+        const dollarDisplay = new Intl.NumberFormat('en-US', {
+            style: 'currency',
+            currency: 'USD',
+            minimumFractionDigits: 2
+        });
+
+        const mins = Math.floor(fileDuration / 60);
         const chargedMins = mins - 15;
         const cents = Math.max(chargedMins * 10, 50);
-        return cents / 100;
+        return dollarDisplay.format(cents / 100);
     }
     
     const fetchIntent = async() => {
         console.log("Fetching payment intent...");
+        setFetchAttempts(fetchAttempts + 1);
 
         try {
             const secs = props.fileDuration;
@@ -74,12 +82,17 @@ function PaymentForm(props) {
                     duration: secs
                 }
             });
-            console.log("Successfully fetched intent", response.clientSecret);
+            console.log("Successfully fetched intent");
             setClientSecret(response.clientSecret);
             setError("");
         } catch (err) {
-            setError("Error creating payment intent. Please reload and try again.")
-            alert("Error creating payment intent. Please reload and try again.");
+            if(fetchAttempts < 2) {
+                console.log("Error fetching intent, retrying...");
+                fetchIntent();
+            } else {
+                setError("Error creating payment intent. Please reload and try again.")
+                alert("Error creating payment intent. Please reload and try again.");
+            }
         }
     };
 
@@ -100,46 +113,49 @@ function PaymentForm(props) {
 
     const handleSubmit = async(event) => {
         event.preventDefault();
-        setProcessing(true);
-        console.log("Payment form submitted");
 
-        // Confirm payment
-        const payload = await stripe.confirmCardPayment(clientSecret, {
-            payment_method: {
-                card: elements.getElement(CardElement),
-                billing_details: event.target.name.value
-            }
-        });
+        if(!processing && error === "") {
+            setProcessing(true);
+            console.log("Payment form submitted");
 
-        if(payload.error) {
-            alert("There was an error processing your payment, please try again.");
-            fetchIntent()
-            setProcessing(false);
-        } else {
-            alert("Your file is now being uploaded. You will be redirected when this is complete");
+            // Confirm payment
+            const payload = await stripe.confirmCardPayment(clientSecret, {
+                payment_method: {
+                    card: elements.getElement(CardElement),
+                    billing_details: event.target.name.value
+                }
+            });
 
-            try {
-                // Upload files from new transcript form
-                await props.uploadFile();
-
-                // Redirect to home page
-                history.push("/");
-                
-            } catch (err) {
-                alert(err);
-                fetchIntent();
+            if(payload.error) {
+                alert("There was an error processing your payment, please try again.");
+                fetchIntent()
                 setProcessing(false);
-            }
+            } else {
+                alert("Your file is now being uploaded. You will be redirected when this is complete");
+
+                try {
+                    // Upload files from new transcript form
+                    await props.uploadFile();
+
+                    // Redirect to home page
+                    history.push("/");
+                    
+                } catch (err) {
+                    alert(err);
+                    fetchIntent();
+                    setProcessing(false);
+                }
+            }   
         }
     }
 
     return (
         <Paper className={classes.formPaper}>
             <form className={classes.formContainer} onSubmit={handleSubmit}>
-                <Typography variant="h4">{`Fee: $${calculatePrice(props.fileDuration)}`}</Typography>
+                <Typography variant="h4">{`Price: ${calculatePrice(props.fileDuration)}`}</Typography>
                 {error && <Typography variant="subtitle1" color="secondary">{error}</Typography>}
                 <CardElement className={classes.cardContainer} options={cardStyle} onChange={handleChange} />
-                <Button className={classes.submitButton} type="submit" variant="contained" color="primary" disabled={processing || error}>
+                <Button className={classes.submitButton} type="submit" variant="contained" color="primary" disabled={processing || (error !== "")}>
                     Upload and Pay
                 </Button>
             </form>

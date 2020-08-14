@@ -28,6 +28,7 @@ const useStyles = makeStyles({
 
 function Signup() {
 
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [code, setCode] = useState("");
@@ -38,21 +39,24 @@ function Signup() {
 
   const { dispatch } = useContext(AuthContext);
 
-  const onSubmit = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    try {
-      const user = await Auth.signUp({username: email, password: password});
-      alert("Sign Up Successful");
-      // Move to confirmation stage
-      setStep(2);
-    } catch (e) {
-      if(e.code == "UsernameExistsException") {
+    // Basic form valdiation
+    if(name && email && password) {
+      try {
+        const user = await Auth.signUp({username: email, password: password});
+        alert("Sign Up Successful");
         // Move to confirmation stage
         setStep(2);
-        alert('An account already exists with this email. Try logging in or requesting another confirmation code.');
-      } else {
-        alert(e.message);
+      } catch (e) {
+        if(e.code == "UsernameExistsException") {
+          // Move to confirmation stage
+          setStep(2);
+          alert('An account already exists with this email. Try logging in or requesting another confirmation code.');
+        } else {
+          alert(e.message);
+        }
       }
     }
   };
@@ -77,7 +81,8 @@ function Signup() {
       // Make post request to update users table
       await API.post("transcripts", "/newUser", {
         body: {
-          email: email
+          email: email,
+          name: name
         }
       });
 
@@ -96,12 +101,13 @@ function Signup() {
     }
   };
 
-  const renderSignInForm = () => {
+  const renderSignUpForm = () => {
     return (
-      <form className={classes.flexForm}>
+      <form className={classes.flexForm} onSubmit={handleSubmit}>
+        <TextField className={classes.formItem} label="Full Name" value={name} onChange={(e) => setName(e.target.value)} /> 
         <TextField className={classes.formItem} label="Email" value={email} onChange={(e) => setEmail(e.target.value)}/>
-        <TextField className={classes.formItem} label="Password" type="password" value={password} onChange={(e) => setPassword(e.target.value)}/>
-        <Button className={classes.formItem} variant="contained" color="primary" onClick={onSubmit}>Submit</Button>
+        <TextField className={classes.formItem} label="Password" type="password" value={password} helperText="Passwords must contain upper and lowercase letters, a number, and a symbol" onChange={(e) => setPassword(e.target.value)}/>
+        <Button type="submit" className={classes.formItem} variant="contained" color="primary">Submit</Button>
         <Typography className={classes.formItem} variant="body1">
           By creating an account you agree to Wordbose's&nbsp;
           <Link className={classes.link} variant="inherit" color="secondary" href="http://wordbose.com/terms.html" target="_blank" rel="noopener noreferrer">Terms and Conditions</Link>,&nbsp;
@@ -114,9 +120,9 @@ function Signup() {
 
   const renderConfirmationForm = () => {
     return (
-      <form className={classes.flexForm}>
+      <form className={classes.flexForm} onSubmit={submitCode}>
         <TextField className={classes.formItem} label="Confirmation Code" value={code} onChange={(e) => setCode(e.target.value)}/>
-        <Button className={classes.formItem} variant="contained" color="primary" onClick={submitCode}>Submit Code</Button>
+        <Button type="submit" className={classes.formItem} variant="contained" color="primary">Submit Code</Button>
         <Button className={classes.formItem} variant="text" color="secondary" onClick={resendCode}>Resend Confimation Code</Button>
       </form>
     );
@@ -126,7 +132,7 @@ function Signup() {
     <>
       <CustomBreadcrumbs steps={[{url: "/", text: "Wordbose"}]} final="Signup" />
       <div className={classes.formContainer}>
-        {step === 1 ? renderSignInForm() : renderConfirmationForm()}
+        {step === 1 ? renderSignUpForm() : renderConfirmationForm()}
       </div>
     </>
   );

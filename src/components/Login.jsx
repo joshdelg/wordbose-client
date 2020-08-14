@@ -45,6 +45,8 @@ function Login() {
       await Auth.signIn(email, password);
       dispatch({type: 'LOG_IN'});
       setLoginState(true);
+      // TODO Temporary solution until login toasts fixed?
+      setTimeout(() => history.push("/"), 1000);
     } catch (err) {
       setLoginState(err.message);
     }

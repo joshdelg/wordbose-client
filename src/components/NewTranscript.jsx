@@ -132,12 +132,14 @@ function NewTranscript(props) {
                 // Call create route
                 const newTranscript = await API.post("transcripts", '/transcript', {
                     body: {
-                    transcriptId: transcriptId,
-                    transcriptName: transcriptName,
-                    date: moment(),
-                    fileName: file.name,
-                    email: user.attributes.email,
-                    numSpeakers: numSpeakers
+                        transcriptId: transcriptId,
+                        transcriptName: transcriptName,
+                        date: moment(),
+                        fileName: file.name,
+                        email: user.attributes.email,
+                        numSpeakers: numSpeakers,
+                        fileDuration: fileDuration,
+                        isPaid: requiresPayment
                     }
                 });
                 
@@ -183,10 +185,17 @@ function NewTranscript(props) {
     }
 
     const calculatePrice = () => {
-        const mins = Math.round(fileDuration / 60);
+
+        const dollarDisplay = new Intl.NumberFormat('en-US', {
+            style: 'currency',
+            currency: 'USD',
+            minimumFractionDigits: 2
+        });
+
+        const mins = Math.floor(fileDuration / 60);
         const chargedMins = mins - 15;
         const cents = Math.max(chargedMins * 10, 50);
-        return cents / 100;
+        return dollarDisplay.format((cents / 100));
     }
 
     const renderTranscriptForm = () => {
@@ -216,7 +225,7 @@ function NewTranscript(props) {
             {(fileDuration !== 0) && 
                 <>
                     <Typography variant="body1">{`Duration: ${Math.floor(fileDuration / 60)} minutes ${Math.round(fileDuration % 60)} seconds`}</Typography>
-                    <Typography variant="body1">{`Price: ${(fileDuration / 60 < 15) ? "Free" : "$" + calculatePrice()}`}</Typography>
+                    <Typography variant="body1">{`Price: ${(fileDuration / 60 < 15) ? "Free" : calculatePrice()}`}</Typography>
                 </>
             }
             <Button className={classes.transcriptSubmitButton} type="submit" variant="contained" color="primary" disabled={!validateForm() || processing}>
