@@ -1,5 +1,5 @@
 import React, { useState, useContext } from "react";
-import { TextField, Button, makeStyles } from "@material-ui/core";
+import { TextField, Button, makeStyles, Typography, Link } from "@material-ui/core";
 import { Auth, API } from "aws-amplify";
 import CustomBreadcrumbs from "./CustomBreadcrumbs";
 import { useHistory } from "react-router-dom";
@@ -20,6 +20,9 @@ const useStyles = makeStyles({
   formItem: {
     margin: "0.75em",
     width: "100%"
+  },
+  link: {
+    //margin: "0 0.5em"
   }
 });
 
@@ -99,6 +102,12 @@ function Signup() {
         <TextField className={classes.formItem} label="Email" value={email} onChange={(e) => setEmail(e.target.value)}/>
         <TextField className={classes.formItem} label="Password" type="password" value={password} onChange={(e) => setPassword(e.target.value)}/>
         <Button className={classes.formItem} variant="contained" color="primary" onClick={onSubmit}>Submit</Button>
+        <Typography className={classes.formItem} variant="body1">
+          By creating an account you agree to Wordbose's&nbsp;
+          <Link className={classes.link} variant="inherit" color="secondary" href="http://wordbose.com/terms.html" target="_blank" rel="noopener noreferrer">Terms and Conditions</Link>,&nbsp;
+          <Link className={classes.link} variant="inherit" color="secondary" href="http://wordbose.com/privacy.html" target="_blank" rel="noopener noreferrer">Privacy Policy</Link>, and&nbsp;
+          <Link className={classes.link} variant="inherit" color="secondary" href="http://wordbose.com/refund.html" target="_blank" rel="noopener noreferrer">Refund Policy</Link>
+        </Typography>
       </form>
     );
   };

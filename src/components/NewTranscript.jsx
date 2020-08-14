@@ -230,10 +230,20 @@ function NewTranscript(props) {
         // Stripe loaded with publishable key
         const promise = loadStripe('pk_test_51HFB3hDCRuX8vF0ZAk8LZZxDyJdaqwGbSS0ugMcIIvAgoZxPu47YN3kOuKgP1ZfFkK7GKt3AbZIHT28oA5HbFocX00HiejHI65');
         
+        const elementOptions = {
+            fonts: [
+                {
+                    cssSrc: "https://fonts.googleapis.com/css2?family=Mulish&display=swap"
+                }
+            ]
+        };
+
         return (
-            <Elements stripe={promise}>
-                <PaymentForm fileDuration={fileDuration} uploadFile={uploadFile} />
-            </Elements>
+            <div>
+                <Elements stripe={promise} options={elementOptions}>
+                    <PaymentForm fileDuration={fileDuration} uploadFile={uploadFile} />
+                </Elements>
+            </div>
         );
     }
 
