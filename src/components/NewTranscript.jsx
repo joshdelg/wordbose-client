@@ -237,7 +237,7 @@ function NewTranscript(props) {
 
     const renderPaymentForm = () => {
         // Stripe loaded with publishable key
-        const promise = loadStripe('pk_test_51HFB3hDCRuX8vF0ZAk8LZZxDyJdaqwGbSS0ugMcIIvAgoZxPu47YN3kOuKgP1ZfFkK7GKt3AbZIHT28oA5HbFocX00HiejHI65');
+        const promise = loadStripe(config.STRIPE_KEY);
         
         const elementOptions = {
             fonts: [
