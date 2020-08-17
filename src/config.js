@@ -17,7 +17,7 @@ const dev = {
 };
 
 const prod = {
-  STRIPE_KEY: "prodstripekey",
+  STRIPE_KEY: "pk_live_51HFB3hDCRuX8vF0ZPSKBVSD451aWfzKwNfMl3VytDgrqJXTwFW1VRTIOYtFRZPU9iiJTNXFUlxe7iWZ7LvpvPa8X003hkYUhIV",
   s3: {
     REGION: "us-west-2",
     BUCKET: "wordbose-api-prod-uploadsbucket-beb5fyvbkc3g"
