@@ -118,7 +118,6 @@ function PaymentForm(props) {
         if(!processing && error === "") {
             setProcessing(true);
             console.log("Payment form submitted");
-            console.log("key", config.STRIPE_KEY);
 
             // Confirm payment
             const payload = await stripe.confirmCardPayment(clientSecret, {
@@ -130,7 +129,6 @@ function PaymentForm(props) {
 
             if(payload.error) {
                 alert("There was an error processing your payment, please try again.");
-                console.log(payload.error);
                 fetchIntent()
                 setProcessing(false);
             } else {
