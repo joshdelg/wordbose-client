@@ -46,7 +46,7 @@ function Signup() {
     if(name && email && password) {
       try {
         const user = await Auth.signUp({username: email, password: password});
-        alert("Sign Up Successful");
+        alert("Sign Up Successful! Check your email for a confirmation code");
         // Move to confirmation stage
         setStep(2);
       } catch (e) {
@@ -69,7 +69,6 @@ function Signup() {
   const submitCode = async (e) => {
     e.preventDefault();
 
-    console.log(email, code);
     try {
       // Use confirmation code
       await Auth.confirmSignUp(email, code);
@@ -105,7 +104,7 @@ function Signup() {
     return (
       <form className={classes.flexForm} onSubmit={handleSubmit}>
         <TextField className={classes.formItem} label="Full Name" value={name} onChange={(e) => setName(e.target.value)} /> 
-        <TextField className={classes.formItem} label="Email" value={email} onChange={(e) => setEmail(e.target.value)}/>
+        <TextField className={classes.formItem} label="Email" value={email} helperText="Emails are not case sensitive" onChange={(e) => setEmail(e.target.value.toLowerCase())}/>
         <TextField className={classes.formItem} label="Password" type="password" value={password} helperText="Passwords must contain upper and lowercase letters, a number, and a symbol" onChange={(e) => setPassword(e.target.value)}/>
         <Button type="submit" className={classes.formItem} variant="contained" color="primary">Submit</Button>
         <Typography className={classes.formItem} variant="body1">

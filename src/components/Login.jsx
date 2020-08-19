@@ -74,13 +74,15 @@ function Login() {
           <TextField
             className={classes.formItem}
             label="Email"
+            helperText="Emails are not case sensitive"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={(e) => setEmail(e.target.value.toLowerCase())}
           />
           <TextField
             type="password"
             className={classes.formItem}
             label="Password"
+            helperText="Passwords must contain upper and lowercase letters, a number, and a symbol"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
