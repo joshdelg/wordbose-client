@@ -6,6 +6,9 @@ import * as serviceWorker from './serviceWorker';
 import Amplify from 'aws-amplify';
 import config from './config';
 import AuthContextProvider from "./contexts/AuthContext";
+import { initSentry } from "./libs/errorLib";
+
+initSentry();
 
 // Configure Amplify (yikes)
 Amplify.configure({

@@ -6,6 +6,7 @@ import { AuthContext } from './contexts/AuthContext';
 import { Auth } from "aws-amplify";
 import { deepPurple, amber } from '@material-ui/core/colors';
 import LoadingScreen from "./components/LoadingScreen";
+import ErrorBoundary from './components/ErrorBoundary';
 
 const globalTheme = createMuiTheme({
   palette: {
@@ -55,7 +56,9 @@ function App() {
               <Grid item container>
                 <Grid item xs={1} sm={2}></Grid>
                 <Grid item container xs={10} sm={8}>
-                  <Routes />
+                  <ErrorBoundary>
+                    <Routes />
+                  </ErrorBoundary>
                 </Grid>
                 <Grid item xs={1} sm={2}></Grid>
               </Grid>
