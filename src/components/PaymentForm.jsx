@@ -85,6 +85,7 @@ function PaymentForm(props) {
             });
             setClientSecret(response.clientSecret);
             setError("");
+            setFetchAttempts(0);
         } catch (err) {
             if(fetchAttempts < 2) {
                 fetchIntent();
@@ -141,8 +142,8 @@ function PaymentForm(props) {
                     
                 } catch (e) {
                     onError(e);
-                    alert(e);
                     fetchIntent();
+                    alert("There was an error uploading your file. Please try again.");
                     setProcessing(false);
                 }
             }   

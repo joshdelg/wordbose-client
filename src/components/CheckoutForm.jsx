@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
 import { API } from "aws-amplify";
 import { Button, Typography, makeStyles } from "@material-ui/core";
+import { onError } from "../libs/errorLib";
 
 const cardStyle = {
     style: {
@@ -52,7 +53,6 @@ function CheckoutForm(props) {
 
     useEffect(() => {
         const fetchIntent = async() => {
-            console.log('fetching!');
             try {
                 // Create a payment intent on page load
                 const secs = props.fileDuration;
@@ -61,9 +61,9 @@ function CheckoutForm(props) {
                         duration: secs
                     }
                 });
-                console.log(response.clientSecret);
                 setClientSecret(response.clientSecret);
             } catch (err) {
+                onError(err);
                 alert(err.message);
             }
         };

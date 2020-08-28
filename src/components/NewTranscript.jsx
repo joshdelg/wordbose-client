@@ -163,13 +163,11 @@ function NewTranscript(props) {
         e.preventDefault();
 
         if(validateForm()) {
-            console.log("Transcript form submitted and valid");
 
             if(requiresPayment) {
                 setStep(2);
             } else {
                 // Handle uploading to S3
-                console.log("Uploading to S3")
                 
                 try {
                     alert("Your file is now being uploaded. You will be redirected when this is complete");
@@ -182,7 +180,7 @@ function NewTranscript(props) {
                 }
             }
         } else {
-            console.log("Form submitted but invalid :(")
+            // Form invalid
         }
     }
 
