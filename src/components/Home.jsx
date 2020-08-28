@@ -15,7 +15,6 @@ function Home() {
     </Grid>*/
     <Container>
       {(authData.isAuthenticated) ? <TranscriptList /> : <UnauthHome />}
-      {authData.none.no}
     </Container>
   );
 }

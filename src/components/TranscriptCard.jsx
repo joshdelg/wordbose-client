@@ -4,6 +4,7 @@ import moment from "moment";
 import { Link } from "react-router-dom";
 import { API } from "aws-amplify";
 import config from "../config";
+import { onError } from "../libs/errorLib";
 
 const useStyles = makeStyles({
   transcriptContainer: {
@@ -52,6 +53,7 @@ function TranscriptCard(props) {
         )
       );
     } catch (err) {
+      onError(err);
       alert(err);
     }
     

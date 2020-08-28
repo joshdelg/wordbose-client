@@ -5,6 +5,7 @@ import { v4 as uuidv4 } from "uuid";
 import moment from "moment";
 import config from "../config";
 import Checkout from "./Checkout";
+import { onError } from "../libs/errorLib";
 
 const useStyles = makeStyles({
   formContainer: {
@@ -140,6 +141,7 @@ function NewTranscriptDialog(props) {
         }]);
 
       } catch (e) {
+        onError(e);
         alert(e);
       }
       setTranscriptName("");

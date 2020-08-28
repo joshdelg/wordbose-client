@@ -5,6 +5,7 @@ import { AuthContext } from "../contexts/AuthContext";
 import { useHistory } from "react-router-dom";
 import CustomSnackbar from "./CustomSnackbar";
 import CustomBreadcrumbs from "./CustomBreadcrumbs";
+import { onError } from "../libs/errorLib";
 
 const useStyles = makeStyles({
   formContainer: {
@@ -47,8 +48,9 @@ function Login() {
       setLoginState(true);
       // TODO Temporary solution until login toasts fixed?
       setTimeout(() => history.push("/"), 1000);
-    } catch (err) {
-      setLoginState(err.message);
+    } catch (e) {
+      onError(e);
+      setLoginState(e.message);
     }
 
     setOpen(true);

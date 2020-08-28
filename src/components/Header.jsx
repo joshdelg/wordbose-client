@@ -3,6 +3,7 @@ import { AppBar, Toolbar, Typography, Button, makeStyles } from "@material-ui/co
 import { Link, useHistory } from "react-router-dom";
 import { AuthContext } from "../contexts/AuthContext";
 import { Auth } from "aws-amplify";
+import { onError } from "../libs/errorLib";
 
 const useStyles = makeStyles({
   brand: {
@@ -35,7 +36,8 @@ function Header() {
       history.push("/");
 
     } catch (e) {
-      alert(e);
+      onError(e);
+      alert("Error signing out. Please try again.");
     }
   };
 

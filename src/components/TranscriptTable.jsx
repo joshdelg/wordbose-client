@@ -3,6 +3,7 @@ import { TableContainer, Table, TableHead, TableRow, TableCell, TableBody, Paper
 import { API } from "aws-amplify";
 import { Link } from "react-router-dom";
 import moment from "moment";
+import { onError } from "../libs/errorLib";
 
 function TranscriptTable(props) {
 
@@ -21,8 +22,9 @@ function TranscriptTable(props) {
     try {
       await API.del("transcripts", `/transcript/${transcriptId}`);
       props.setTranscripts(props.transcripts.filter((t) => t.transcriptId !== transcriptId));
-    } catch (err) {
-      alert(err.message);
+    } catch (e) {
+      onError(e);
+      alert("Error deleting transcript. Please try again.");
     }
   }
 

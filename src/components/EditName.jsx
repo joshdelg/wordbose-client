@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { TextField, IconButton, Typography, makeStyles } from "@material-ui/core";
 import { Create, Check, Clear } from "@material-ui/icons";
 import { API } from "aws-amplify";
+import { onError } from "../libs/errorLib";
 
 const useStyles = makeStyles({
   nameTextField: {
@@ -28,7 +29,8 @@ function EditName(props) {
           }
         });
       } catch (e) {
-        alert(e);
+        onError(e);
+        alert("Error saving name, please try again.");
       }
 
       props.setTranscript({

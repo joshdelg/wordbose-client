@@ -14,6 +14,7 @@ import EditName from "./EditName";
 import CustomBreadcrumbs from "./CustomBreadcrumbs";
 import TranscriptBlocks from "./TranscriptBlocks";
 import LegacyTranscriptView from "./LegacyTranscriptView";
+import { onError } from "../libs/errorLib";
 
 const useStyles = makeStyles({
   transcriptDetailContainer: {
@@ -45,15 +46,13 @@ function TranscriptDetail() {
 
   useEffect(() => {
     const fetchTranscript = async () => {
-      console.log("Fetching single transcript");
+
       try {
-        const fetched = await API.get(
-          "transcripts",
-          `/transcript/${transcriptId}`
-        );
+        const fetched = await API.get("transcripts", `/transcript/${transcriptId}`);
         setTranscript(fetched.Item);
       } catch (e) {
-        alert(e.message);
+        onError(e);
+        alert("Error fetching transcript data. Please reload to try again.");
       }
     };
 
@@ -79,7 +78,8 @@ function TranscriptDetail() {
         },
       });
     } catch (e) {
-      alert(e.message);
+      onError(e);
+      alert("Error saving changes. Please try again.");
     }
   };
 
@@ -100,7 +100,8 @@ function TranscriptDetail() {
         },
       });
     } catch (e) {
-      alert(e);
+      onError(e);
+      alert("Error saving speaker name. Please try again.");
     }
   }
 

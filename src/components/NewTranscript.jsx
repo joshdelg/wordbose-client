@@ -9,6 +9,7 @@ import { API, Storage, Auth } from "aws-amplify";
 import { v4 as uuidv4 } from "uuid";
 import moment from "moment";
 import { useHistory } from "react-router-dom";
+import { onError } from "../libs/errorLib";
 
 const useStyles = makeStyles({
     container: {
@@ -151,7 +152,7 @@ function NewTranscript(props) {
 
                 resolve();
             } catch (e) {
-                reject("There was an error uploading your files. Please try again.");
+                reject(e);
             }
 
             setProcessing(false);
@@ -176,7 +177,8 @@ function NewTranscript(props) {
                     // Redirect to home page
                     history.push("/");
                 } catch (err) {
-                    alert(err);
+                    onError(err);
+                    alert("There was an error uploading your files. Please try again.");
                 }
             }
         } else {

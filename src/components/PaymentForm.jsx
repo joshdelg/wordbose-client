@@ -4,6 +4,7 @@ import { Button, useTheme, makeStyles, Paper, Typography, useMediaQuery } from "
 import { API } from "aws-amplify";
 import { useHistory } from "react-router-dom";
 import config from "../config";
+import { onError } from "../libs/errorLib";
 
 const useStyles = makeStyles({
     formPaper: {
@@ -73,7 +74,6 @@ function PaymentForm(props) {
     }
     
     const fetchIntent = async() => {
-        console.log("Fetching payment intent...");
         setFetchAttempts(fetchAttempts + 1);
 
         try {
@@ -83,15 +83,14 @@ function PaymentForm(props) {
                     duration: secs
                 }
             });
-            console.log("Successfully fetched intent");
             setClientSecret(response.clientSecret);
             setError("");
         } catch (err) {
             if(fetchAttempts < 2) {
-                console.log("Error fetching intent, retrying...");
                 fetchIntent();
             } else {
                 setError("Error creating payment intent. Please reload and try again.")
+                onError(err);
                 alert("Error creating payment intent. Please reload and try again.");
             }
         }
@@ -117,7 +116,6 @@ function PaymentForm(props) {
 
         if(!processing && error === "") {
             setProcessing(true);
-            console.log("Payment form submitted");
 
             // Confirm payment
             const payload = await stripe.confirmCardPayment(clientSecret, {
@@ -128,11 +126,11 @@ function PaymentForm(props) {
             });
 
             if(payload.error) {
-                alert("There was an error processing your payment, please try again.");
+                alert("There was an error processing your payment, please try again. Your card was not charged.");
                 fetchIntent()
                 setProcessing(false);
             } else {
-                alert("Your file is now being uploaded. You will be redirected when this is complete");
+                alert("Your file is now being uploaded. You will be redirected when this is complete.");
 
                 try {
                     // Upload files from new transcript form
@@ -141,8 +139,9 @@ function PaymentForm(props) {
                     // Redirect to home page
                     history.push("/");
                     
-                } catch (err) {
-                    alert(err);
+                } catch (e) {
+                    onError(e);
+                    alert(e);
                     fetchIntent();
                     setProcessing(false);
                 }

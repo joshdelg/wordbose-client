@@ -7,6 +7,7 @@ import Searchbar from "./Searchbar";
 import CustomBreadcrumbs from "./CustomBreadcrumbs";
 import { Link } from "react-router-dom";
 import { Add } from "@material-ui/icons";
+import { onError } from "../libs/errorLib";
 
 const useStyles = makeStyles({
   header: {
@@ -34,12 +35,13 @@ function TranscriptList(props) {
   useEffect(() => {
 
     const getTranscripts = async() => {
-      console.log("Fetching transcripts");
+
       try {
         const data = await API.get("transcripts", "/transcript");
         setTranscripts(data);
       } catch (e) {
-        alert(e);
+        onError(e);
+        alert("Error fetching transcripts. Please reload to try again.");
       }
     }
 

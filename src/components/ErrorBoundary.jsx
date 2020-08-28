@@ -1,8 +1,17 @@
 import React from "react";
 import { logError } from "../libs/errorLib";
-import { Typography } from "@material-ui/core";
+import { Typography, withStyles } from "@material-ui/core";
 
-export default class ErrorBoundary extends React.Component {
+const styles = {
+    errorBoundary: {
+        display: "flex",
+        flexDirection: "column",
+        width: "100%",
+        alignItems: "center"
+    }
+};
+
+class ErrorBoundary extends React.Component {
     state = {
         hasError: false
     };
@@ -16,12 +25,15 @@ export default class ErrorBoundary extends React.Component {
     }
 
     render() {
+        const { classes } = this.props;
         return this.state.hasError ? (
-            <div className="error-boundary">
-                <Typography variant="h1">Sorry, there was an error loading this page.</Typography>
+            <div className={classes.errorBoundary}>
+                <Typography variant="h3">Sorry, there was an error loading this page.</Typography>
             </div>
         ) : (
             this.props.children
         );
     }
-}
+};
+
+export default withStyles(styles)(ErrorBoundary);

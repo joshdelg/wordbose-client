@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Typography, Paper, TextField, Button, makeStyles } from "@material-ui/core";
 import { API } from "aws-amplify";
+import { onError } from "../libs/errorLib";
 
 const useStyles = makeStyles({
   transcriptPaper: {
@@ -62,7 +63,8 @@ function LegacyTranscriptView(props) {
       })
       setIsEditing(false);
     } catch (e) {
-      alert(e);
+      onError(e);
+      alert("Error saving changes. Please try again.");
     }
   }
 

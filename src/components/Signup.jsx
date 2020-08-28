@@ -4,6 +4,7 @@ import { Auth, API } from "aws-amplify";
 import CustomBreadcrumbs from "./CustomBreadcrumbs";
 import { useHistory } from "react-router-dom";
 import { AuthContext } from "../contexts/AuthContext";
+import { onError } from "../libs/errorLib";
 
 const useStyles = makeStyles({
   formContainer: {
@@ -57,16 +58,17 @@ function Signup() {
     if(validateForm()) {
       try {
         const user = await Auth.signUp({username: email, password: password});
-        alert("Sign Up Successful! Check your email for a confirmation code");
+        alert("Sign Up Successful! Check your email for a confirmation code.");
         // Move to confirmation stage
         setStep(2);
-      } catch (e) {
-        if(e.code == "UsernameExistsException") {
+      } catch (err) {
+        if(err.code == "UsernameExistsException") {
           // Move to confirmation stage
           setStep(2);
           alert('An account already exists with this email. Try logging in or requesting another confirmation code.');
         } else {
-          alert(e.message);
+          onError(err);
+          alert(err.message);
         }
       }
     }
@@ -76,7 +78,7 @@ function Signup() {
 
   const resendCode = async() => {
     await Auth.resendSignUp(email);
-    alert('Confirmation code resent');
+    alert('Confirmation code has been sent again.');
   };
 
   const submitCode = async (e) => {
@@ -99,17 +101,17 @@ function Signup() {
         }
       });
 
-      alert("Confirmation Successful");
+      alert("Confirmation Successful!");
 
       // Redirect to home page
       history.push("/");
-    } catch (e) {
-      if(e.message == "User cannot be confirmed. Current status is CONFIRMED") {
+    } catch (err) {
+      if(err.message == "User cannot be confirmed. Current status is CONFIRMED") {
         alert('User is already confirmed. Try logging in.');
         history.push("/login");
       } else {
-        console.log(e);
-        alert(e.message);
+        onError(err);
+        alert(err.message);
         setIsLoading(false);
       }
     }
