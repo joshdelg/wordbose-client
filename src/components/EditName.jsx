@@ -71,7 +71,7 @@ function EditName(props) {
         <Typography variant="h3">
           {props.transcript.transcriptName}
           <IconButton onClick={handleEditClick}>
-            <Create color="secondary"/>
+            <Create color="primary"/>
           </IconButton>
         </Typography>
       </>

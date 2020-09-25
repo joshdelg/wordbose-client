@@ -1,11 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
-import { useParams } from "react-router-dom";
-import {
-  makeStyles,
-  Typography,
-  useTheme,
-  useMediaQuery
-} from "@material-ui/core";
+import { useParams, useHistory } from "react-router-dom";
+import { makeStyles, Typography, useTheme, useMediaQuery, IconButton } from "@material-ui/core";
+import { GetApp, Delete } from "@material-ui/icons";
 import { API } from "aws-amplify";
 import moment from "moment";
 import { AuthContext } from "../contexts/AuthContext";
@@ -15,6 +11,7 @@ import CustomBreadcrumbs from "./CustomBreadcrumbs";
 import TranscriptBlocks from "./TranscriptBlocks";
 import LegacyTranscriptView from "./LegacyTranscriptView";
 import { onError } from "../libs/errorLib";
+import download from "downloadjs";
 
 const useStyles = makeStyles({
   transcriptDetailContainer: {
@@ -23,20 +20,20 @@ const useStyles = makeStyles({
   heading: {
     margin: "16px 0px",
   },
-  transcriptHeaders: {
+  dateRow: {
     display: "flex",
+    flexDirection: "row",
     justifyContent: "space-between",
-    padding: "0.25em"
+    alignItems: "center"
   },
-  titleAndButton: {
-    flex: "1",
-    display: "flex"
-  }
 });
 
 function TranscriptDetail() {
   const { transcriptId } = useParams();
+  let history = useHistory();
+
   const [transcript, setTranscript] = useState({});
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const theme = useTheme();
   const small = useMediaQuery(theme.breakpoints.down("md"));
@@ -110,35 +107,61 @@ function TranscriptDetail() {
       return <TranscriptBlocks transcript={transcript} saveChanges={saveChanges} saveName={saveSpeakerName}/>
     }
   }
-  
+
   const renderLegacyView = () => (
     <LegacyTranscriptView transcript={transcript} setTranscript={setTranscript}/>
   )
 
-  const renderTranscriptDetail = () => (
-    <div className={classes.transcriptDetailContainer}>
-      <CustomBreadcrumbs steps={[{url: "/", text: "Wordbose"}]} final="Edit" />
-      <Typography className={classes.heading} variant="h2">
-        Edit Your Transcript
-      </Typography>
-      <div
-        className={classes.transcriptHeaders}
-        style={
-          small
-            ? { flexDirection: "column" }
-            : { flexDirection: "row", alignItems: "flex-end" }
-        }
-      >
-        <span className={classes.titleAndButton}>
-          <EditName transcript={transcript} setTranscript={setTranscript}/>
-        </span>
-        <Typography variant="h5">
-          {moment(transcript.date).format("MMMM Do YYYY")}
+  const renderTranscriptDetail = () => {
+
+    const downloadTranscript = () => {
+      // Format transcript
+      let output = "";
+
+      transcript.blocks.forEach((block, i) => {
+        output += `[${block.speakerName}]: ${block.text}\n`;
+      });
+      output = output.substring(0, output.length - 1);
+
+      download(output, `${transcript.transcriptName}.txt`, "text/plain");
+    };
+
+    const deleteTranscript = async() => {
+      setIsDeleting(true);
+
+      try {
+        await API.del("transcripts", `/transcript/${transcript.transcriptId}`);
+
+        // Redirect
+        history.push("/");
+      } catch (err) {
+        onError(err);
+        alert("Error deleting transcript. Please try again.");
+      }
+    }
+
+    return (
+      <div className={classes.transcriptDetailContainer}>
+        <CustomBreadcrumbs steps={[{url: "/", text: "Wordbose"}]} final="Edit" />
+        <Typography className={classes.heading} variant="h2">
+          Edit Your Transcript
         </Typography>
+        <div>
+          <EditName transcript={transcript} setTranscript={setTranscript}/>
+        </div>
+        <div className={classes.dateRow}>
+          <Typography variant="h5">
+            {moment(transcript.date).format("MMMM Do YYYY")}
+          </Typography>
+          <span>
+            <IconButton color="primary" onClick={downloadTranscript}><GetApp /></IconButton>
+            <IconButton color="primary" onClick={deleteTranscript}><Delete /></IconButton>
+          </span>
+        </div>
+        {(!transcript.blocks || transcript.blocks.length === 0) ? renderLegacyView() : renderTranscriptBlocks()}
       </div>
-      {(!transcript.blocks || transcript.blocks.length === 0) ? renderLegacyView() : renderTranscriptBlocks()}
-    </div>
-  );
+    );
+  };
 
   return (
     <>
