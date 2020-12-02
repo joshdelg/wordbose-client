@@ -62,10 +62,13 @@ function Signup() {
         // Move to confirmation stage
         setStep(2);
       } catch (err) {
+        console.log(err);
         if(err.code == "UsernameExistsException") {
           // Move to confirmation stage
           setStep(2);
           alert('An account already exists with this email. Try logging in or requesting another confirmation code.');
+        } else if(err.code === "InvalidPasswordException") {
+          alert(err.message);
         } else {
           onError(err);
           alert(err.message);
@@ -120,7 +123,7 @@ function Signup() {
   const renderSignUpForm = () => {
     return (
       <form className={classes.flexForm} onSubmit={handleSubmit}>
-        <TextField className={classes.formItem} label="Full Name" value={name} onChange={(e) => setName(e.target.value)} /> 
+        <TextField className={classes.formItem} label="Full Name" value={name} onChange={(e) => setName(e.target.value)} />
         <TextField className={classes.formItem} label="Email" value={email} helperText="Emails are not case sensitive" onChange={(e) => setEmail(e.target.value.toLowerCase())}/>
         <TextField className={classes.formItem} label="Password" type="password" value={password} helperText="Passwords must contain upper and lowercase letters, a number, and a symbol" onChange={(e) => setPassword(e.target.value)}/>
         <Button type="submit" className={classes.formItem} variant="contained" color="primary" disabled={!validateForm() || isLoading}>Submit</Button>

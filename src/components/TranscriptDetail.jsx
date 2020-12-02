@@ -112,6 +112,13 @@ function TranscriptDetail() {
     <LegacyTranscriptView transcript={transcript} setTranscript={setTranscript}/>
   )
 
+  const emptyOrData = () => {
+    return (
+      transcript.transcript ?
+        renderTranscriptDetail() : (<Typography variant="h3">Your transcript is not available at this time. You will be emailed when it is complete.</Typography>)
+    );
+  }
+
   const renderTranscriptDetail = () => {
 
     const downloadTranscript = () => {
@@ -146,26 +153,26 @@ function TranscriptDetail() {
         <Typography className={classes.heading} variant="h2">
           Edit Your Transcript
         </Typography>
-        <div>
-          <EditName transcript={transcript} setTranscript={setTranscript}/>
-        </div>
-        <div className={classes.dateRow}>
-          <Typography variant="h5">
-            {moment(transcript.date).format("MMMM Do YYYY")}
-          </Typography>
-          <span>
-            <IconButton color="primary" onClick={downloadTranscript}><GetApp /></IconButton>
-            <IconButton color="primary" onClick={deleteTranscript}><Delete /></IconButton>
-          </span>
-        </div>
-        {(!transcript.blocks || transcript.blocks.length === 0) ? renderLegacyView() : renderTranscriptBlocks()}
+          <div>
+            <EditName transcript={transcript} setTranscript={setTranscript}/>
+          </div>
+          <div className={classes.dateRow}>
+            <Typography variant="h5">
+              {moment(transcript.date).format("MMMM Do YYYY")}
+            </Typography>
+            <span>
+              <IconButton color="primary" onClick={downloadTranscript}><GetApp /></IconButton>
+              <IconButton color="primary" onClick={deleteTranscript}><Delete /></IconButton>
+            </span>
+          </div>
+          {(!transcript.blocks || transcript.blocks.length === 0) ? renderLegacyView() : renderTranscriptBlocks()}
       </div>
     );
   };
 
   return (
     <>
-      {(authData.isAuthenticated && transcript) ? renderTranscriptDetail() : <IncorrectUser />}
+      {(authData.isAuthenticated && transcript) ? emptyOrData() : <IncorrectUser />}
     </>
   )
 }
