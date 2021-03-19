@@ -6,6 +6,7 @@ import Signup from "./components/Signup";
 import Checkout from "./components/Checkout";
 import TranscriptDetail from "./components/TranscriptDetail";
 import NewTranscript from "./components/NewTranscript";
+import BillingDashboard from "./components/BillingDashboard";
 
 function Routes() {
   return (
@@ -16,8 +17,8 @@ function Routes() {
       <Route path="/signup">
         <Signup />
       </Route>
-      <Route path="/checkout">
-        <Checkout />
+      <Route path="/billing">
+        <BillingDashboard />
       </Route>
       <Route path="/new">
         <NewTranscript />

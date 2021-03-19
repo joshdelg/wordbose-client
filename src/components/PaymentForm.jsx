@@ -122,10 +122,8 @@ function PaymentForm(props) {
             console.log(event);
             const payload = await stripe.confirmCardPayment(clientSecret, {
                 payment_method: {
-                    card: elements.getElement(CardElement),
-                    //billing_details: event.target.name.value
-                },
-                setup_future_usage: "on_session"
+                    card: elements.getElement(CardElement)
+                }
             });
 
             if(payload.error) {

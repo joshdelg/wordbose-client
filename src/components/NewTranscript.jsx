@@ -2,8 +2,6 @@ import React, { useState } from "react";
 import { Typography, TextField, Input, makeStyles, Button } from "@material-ui/core";
 import CustomBreadcrumbs from "./CustomBreadcrumbs";
 import config from "../config";
-import { loadStripe } from "@stripe/stripe-js";
-import { Elements } from "@stripe/react-stripe-js";
 import PaymentForm from "./PaymentForm";
 import { API, Storage, Auth } from "aws-amplify";
 import { v4 as uuidv4 } from "uuid";
@@ -72,7 +70,7 @@ function NewTranscript(props) {
                 player.preload = 'metadata';
                 player.onloadedmetadata = () => {
                     setFileDuration(player.duration);
-                    
+
                     // Ensure file is under 4 hours, and set require payment if over threshold
                     if(player.duration >= config.MAX_FILE_DURATION) {
                         reset = true;
@@ -82,7 +80,7 @@ function NewTranscript(props) {
                             setRequiresPayment(true);
                         } else {
                             setRequiresPayment(false);
-                        }   
+                        }
                     }
                 }
                 player.src = URL.createObjectURL(e.target.files[0]);
@@ -126,7 +124,7 @@ function NewTranscript(props) {
             // Generate transciptId client side
             const transcriptId = uuidv4();
             const extension = file.name.substring(file.name.lastIndexOf('.'));
-            
+
             try {
                 const user = await Auth.currentAuthenticatedUser();
 
@@ -143,7 +141,7 @@ function NewTranscript(props) {
                         isPaid: requiresPayment
                     }
                 });
-                
+
                 // Store attached file in S3 with name of transriptId
                 // ! Filename: {transcriptId}.{ext} is necessary for backend
                 const stored = await Storage.vault.put(transcriptId + extension, file, {
@@ -168,7 +166,7 @@ function NewTranscript(props) {
                 setStep(2);
             } else {
                 // Handle uploading to S3
-                
+
                 try {
                     alert("Your file is now being uploaded. You will be redirected when this is complete");
                     await uploadFile();
@@ -222,7 +220,7 @@ function NewTranscript(props) {
               value={numSpeakers}
               onChange={handleChangeNumSpeakers}
             />
-            {(fileDuration !== 0) && 
+            {(fileDuration !== 0) &&
                 <>
                     <Typography variant="body1">{`Duration: ${Math.floor(fileDuration / 60)} minutes ${Math.round(fileDuration % 60)} seconds`}</Typography>
                     <Typography variant="body1">{`Price: ${(fileDuration / 60 < 15) ? "Free" : calculatePrice()}`}</Typography>
@@ -236,23 +234,12 @@ function NewTranscript(props) {
     }
 
     const renderPaymentForm = () => {
-        // Stripe loaded with publishable key
-        const promise = loadStripe(config.STRIPE_KEY);
-        
-        const elementOptions = {
-            fonts: [
-                {
-                    cssSrc: "https://fonts.googleapis.com/css2?family=Mulish&display=swap"
-                }
-            ]
-        };
+
 
         return (
-            <div>
-                <Elements stripe={promise} options={elementOptions}>
-                    <PaymentForm fileDuration={fileDuration} uploadFile={uploadFile} />
-                </Elements>
-            </div>
+            <>
+                <PaymentForm fileDuration={fileDuration} uploadFile={uploadFile} />
+            </>
         );
     }
 

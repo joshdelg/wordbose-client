@@ -23,8 +23,8 @@ function Header() {
   const renderUnauthButtons = () => {
     return (
       <>
-        <Button color="inherit" component={Link} to="/signup">Sign Up</Button> 
-        <Button color="inherit" component={Link} to="/login">Log In</Button> 
+        <Button color="inherit" component={Link} to="/signup">Sign Up</Button>
+        <Button color="inherit" component={Link} to="/login">Log In</Button>
       </>
     )
   };
@@ -47,7 +47,10 @@ function Header() {
         <Typography className={classes.brand} variant="h6" component={Link} to="/">Wordbose</Typography>
         {
           (authData.isAuthenticated)
-          ? <Button color="inherit" onClick={handleSignOut}>Sign Out</Button> 
+          ? <>
+              <Button color="inherit" component={Link} to="/billing">Billing</Button>
+              <Button color="inherit" onClick={handleSignOut}>Sign Out</Button>
+            </>
           : renderUnauthButtons()
         }
       </Toolbar>
