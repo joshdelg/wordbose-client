@@ -72,7 +72,7 @@ function PaymentForm(props) {
         const cents = Math.max(chargedMins * 10, 50);
         return dollarDisplay.format(cents / 100);
     }
-    
+
     const fetchIntent = async() => {
         setFetchAttempts(fetchAttempts + 1);
 
@@ -119,11 +119,13 @@ function PaymentForm(props) {
             setProcessing(true);
 
             // Confirm payment
+            console.log(event);
             const payload = await stripe.confirmCardPayment(clientSecret, {
                 payment_method: {
                     card: elements.getElement(CardElement),
-                    billing_details: event.target.name.value
-                }
+                    //billing_details: event.target.name.value
+                },
+                setup_future_usage: "on_session"
             });
 
             if(payload.error) {
@@ -139,14 +141,14 @@ function PaymentForm(props) {
 
                     // Redirect to home page
                     history.push("/");
-                    
+
                 } catch (e) {
                     onError(e);
                     fetchIntent();
                     alert("There was an error uploading your file. Please try again.");
                     setProcessing(false);
                 }
-            }   
+            }
         }
     }
 

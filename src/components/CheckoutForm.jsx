@@ -1,3 +1,8 @@
+//!!! DEPRECATED DO NOT USE THIS ONE LOL
+//!!! DEPRECATED DO NOT USE THIS ONE LOL
+//!!! DEPRECATED DO NOT USE THIS ONE LOL
+//!!! DEPRECATED DO NOT USE THIS ONE LOL
+
 import React, { useState, useEffect } from "react";
 import { CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
 import { API } from "aws-amplify";
@@ -74,31 +79,34 @@ function CheckoutForm(props) {
     const handleChange = async(e) => {
         setDisabled(e.empty);
         setError(e.error ? e.error.message : "");
-    } 
+    }
 
     const handleSubmit = async(e) => {
         e.preventDefault();
         setProcessing(true);
-
+        console.log("Hello,m world2@");
         if(props.validateForm()) {
+            console.log(e.target.name.value);
+            console.log("Hello");
             const payload = await stripe.confirmCardPayment(clientSecret, {
                 payment_method: {
                     card: elements.getElement(CardElement),
                     billing_details: e.target.name.value
-                }
+                },
+                setup_future_usage: "on_session"
             });
-    
+
             if(payload.error) {
                 setError(null);
                 setProcessing(false);
             } else {
-    
+
                 alert("Success! Your files are now being uploaded");
-    
+
                 setError("");
                 setProcessing(false);
                 setSucceeded(true);
-    
+
                 // Upload files from new transcript dialog
                 props.upload(e);
             }

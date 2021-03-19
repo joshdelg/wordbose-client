@@ -1,3 +1,8 @@
+//!!! DEPRECATED DO NOT USE THIS ONE LOL
+//!!! DEPRECATED DO NOT USE THIS ONE LOL
+//!!! DEPRECATED DO NOT USE THIS ONE LOL
+//!!! DEPRECATED DO NOT USE THIS ONE LOL
+
 import React from "react";
 import { loadStripe } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js";
