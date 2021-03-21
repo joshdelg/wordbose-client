@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
-import { Button, useTheme, makeStyles, Paper, Typography, useMediaQuery } from "@material-ui/core";
+import { Button, useTheme, makeStyles, Paper, Typography, useMediaQuery, FormControl, FormLabel, RadioGroup, FormControlLabel, Radio } from "@material-ui/core";
 import { API } from "aws-amplify";
 import { useHistory } from "react-router-dom";
 import config from "../config";
@@ -28,6 +28,8 @@ const useStyles = makeStyles({
 
 function PaymentForm(props) {
 
+    const [paymentMethods, setPaymentMethods] = useState([]);
+    const [selectedCard, setSelectedCard] = useState("newCard");
     const [processing, setProcessing] = useState(false);
     const [error, setError] = useState("");
     const [clientSecret, setClientSecret] = useState("");
@@ -97,8 +99,18 @@ function PaymentForm(props) {
         }
     };
 
+    const fetchPaymentMethods = async() => {
+        try {
+            const response = await API.post("transcripts", "/listPaymentMethods");
+            setPaymentMethods(response.paymentMethods);
+        } catch(e) {
+            alert("Error fetching payment methods :(");
+        }
+    };
+
     // Generate payment intent on load
     useEffect(() => {
+        fetchPaymentMethods();
         fetchIntent();
     }, []);
 
@@ -119,11 +131,10 @@ function PaymentForm(props) {
             setProcessing(true);
 
             // Confirm payment
-            console.log(event);
+            const paymentMethod = (selectedCard === "newCard") ? {card: elements.getElement(CardElement)} : selectedCard;
+
             const payload = await stripe.confirmCardPayment(clientSecret, {
-                payment_method: {
-                    card: elements.getElement(CardElement)
-                }
+                payment_method: paymentMethod
             });
 
             if(payload.error) {
@@ -150,12 +161,31 @@ function PaymentForm(props) {
         }
     }
 
+    const handleCardChange = (event) => {
+        setSelectedCard(event.target.value);
+    }
+
     return (
         <Paper className={classes.formPaper}>
             <form className={classes.formContainer} onSubmit={handleSubmit}>
                 <Typography variant="h4">{`Price: ${calculatePrice(props.fileDuration)}`}</Typography>
+                <FormControl component="fieldset">
+                    <FormLabel component="legend">Select Card:</FormLabel>
+                    <RadioGroup value={selectedCard} onChange={handleCardChange}>
+                        {
+                            paymentMethods.map((method) => (
+                                <FormControlLabel
+                                    key={method.id}
+                                    value={method.id}
+                                    control={<Radio />}
+                                    label={`${method.card.brand.charAt(0).toUpperCase() + method.card.brand.substr(1)} ending in ${method.card.last4}`} />
+                            ))
+                        }
+                        <FormControlLabel value="newCard" control={<Radio />} label="New Card" />
+                    </RadioGroup>
+                </FormControl>
                 {error && <Typography variant="subtitle1" color="secondary">{error}</Typography>}
-                <CardElement className={classes.cardContainer} options={cardStyle} onChange={handleChange} />
+                {selectedCard === "newCard" && <CardElement className={classes.cardContainer} options={cardStyle} onChange={handleChange} />}
                 <Button className={classes.submitButton} type="submit" variant="contained" color="primary" disabled={processing || (error !== "")}>
                     Upload and Pay
                 </Button>

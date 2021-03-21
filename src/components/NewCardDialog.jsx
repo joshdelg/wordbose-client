@@ -49,12 +49,19 @@ function NewCardDialog(props) {
                 alert("There was a problem with stripe :(");
             } else {
                 alert("Everything worked!");
-                console.log(result.setupIntent.payment_method);
+
+                await API.post("transcripts", "/attachPaymentMethod", {
+                    body: {
+                        paymentMethodId: result.setupIntent.payment_method
+                    }
+                });
+
             }
         } catch(e) {
             alert("Something failed with the API request l boa :(");
         }
         setLoading(false);
+        props.updatePaymentMethods();
         props.handleClose();
     };
 
