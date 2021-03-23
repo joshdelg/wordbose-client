@@ -2,6 +2,7 @@ import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, B
 import { CardElement, useElements, useStripe } from "@stripe/react-stripe-js";
 import React, { useState } from "react";
 import { API } from "aws-amplify";
+import { onError } from "../libs/errorLib";
 
 function NewCardDialog(props) {
     const theme = useTheme();
@@ -46,19 +47,17 @@ function NewCardDialog(props) {
             });
 
             if(result.error) {
-                alert("There was a problem with stripe :(");
+                alert("Unable to set up card, please try again.");
             } else {
-                alert("Everything worked!");
-
                 await API.post("transcripts", "/attachPaymentMethod", {
                     body: {
                         paymentMethodId: result.setupIntent.payment_method
                     }
                 });
-
             }
         } catch(e) {
-            alert("Something failed with the API request l boa :(");
+            onError(e);
+            alert("Unable to set up card, please try again.");
         }
         setLoading(false);
         props.updatePaymentMethods();
