@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
-import { Button, useTheme, makeStyles, Paper, Typography, useMediaQuery, FormControl, FormLabel, RadioGroup, FormControlLabel, Radio } from "@material-ui/core";
+import { Button, useTheme, makeStyles, Paper, Typography, useMediaQuery, FormControl, FormLabel, RadioGroup, FormControlLabel, Radio, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from "@material-ui/core";
 import { API } from "aws-amplify";
 import { useHistory } from "react-router-dom";
 import config from "../config";
@@ -33,7 +33,9 @@ function PaymentForm(props) {
     const [processing, setProcessing] = useState(false);
     const [error, setError] = useState("");
     const [clientSecret, setClientSecret] = useState("");
+    const [paymentId, setPaymentId] = useState("");
     const [fetchAttempts, setFetchAttempts] = useState(0);
+    const [open, setOpen] = useState(false);
 
     const stripe = useStripe();
     const elements = useElements();
@@ -86,6 +88,7 @@ function PaymentForm(props) {
                 }
             });
             setClientSecret(response.clientSecret);
+            setPaymentId(response.paymentId);
             setError("");
             setFetchAttempts(0);
         } catch (err) {
@@ -143,7 +146,7 @@ function PaymentForm(props) {
                 setProcessing(false);
             } else {
                 alert("Your file is now being uploaded. You will be redirected when this is complete.");
-
+                console.log("ID at upload is", paymentId);
                 try {
                     // Upload files from new transcript form
                     await props.uploadFile();
@@ -153,9 +156,8 @@ function PaymentForm(props) {
 
                 } catch (e) {
                     onError(e);
-                    fetchIntent();
-                    alert("There was an error uploading your file. Please try again.");
                     setProcessing(false);
+                    setOpen(true);
                 }
             }
         }
@@ -165,32 +167,72 @@ function PaymentForm(props) {
         setSelectedCard(event.target.value);
     }
 
+    const handleRefund = async () => {
+        try {
+            setProcessing(true);
+            console.log("refunded client secret", paymentId);
+            const refund = await API.post("transcripts", "/refund", {
+                body: {
+                    paymentId: paymentId
+                }
+            });
+
+            setOpen(false);
+            alert("Card successfully refunded!");
+        } catch(e) {
+            onError(e);
+            setOpen(false);
+            alert("Card could not be refunded. Please email contact@wordbose.com with the date, time, and email used for your purchase for a manual refund.");
+        }
+        setProcessing(false);
+        history.push("/");
+    }
+
+    const handleCloseRefund = () => {
+        setOpen(false);
+        history.push("/");
+    }
+
     return (
-        <Paper className={classes.formPaper}>
-            <form className={classes.formContainer} onSubmit={handleSubmit}>
-                <Typography variant="h4">{`Price: ${calculatePrice(props.fileDuration)}`}</Typography>
-                <FormControl component="fieldset">
-                    <FormLabel component="legend">Select Card:</FormLabel>
-                    <RadioGroup value={selectedCard} onChange={handleCardChange}>
-                        {
-                            paymentMethods.map((method) => (
-                                <FormControlLabel
-                                    key={method.id}
-                                    value={method.id}
-                                    control={<Radio />}
-                                    label={`${method.card.brand.charAt(0).toUpperCase() + method.card.brand.substr(1)} ending in ${method.card.last4}`} />
-                            ))
-                        }
-                        <FormControlLabel value="newCard" control={<Radio />} label="New Card" />
-                    </RadioGroup>
-                </FormControl>
-                {error && <Typography variant="subtitle1" color="secondary">{error}</Typography>}
-                {selectedCard === "newCard" && <CardElement className={classes.cardContainer} options={cardStyle} onChange={handleChange} />}
-                <Button className={classes.submitButton} type="submit" variant="contained" color="primary" disabled={processing || (error !== "")}>
-                    Upload and Pay
-                </Button>
-            </form>
-        </Paper>
+        <>
+            <Paper className={classes.formPaper}>
+                <form className={classes.formContainer} onSubmit={handleSubmit}>
+                    <Typography variant="h4">{`Price: ${calculatePrice(props.fileDuration)}`}</Typography>
+                    <FormControl component="fieldset">
+                        <FormLabel component="legend">Select Card:</FormLabel>
+                        <RadioGroup value={selectedCard} onChange={handleCardChange}>
+                            {
+                                paymentMethods.map((method) => (
+                                    <FormControlLabel
+                                        key={method.id}
+                                        value={method.id}
+                                        control={<Radio />}
+                                        label={`${method.card.brand.charAt(0).toUpperCase() + method.card.brand.substr(1)} ending in ${method.card.last4}`} />
+                                ))
+                            }
+                            <FormControlLabel value="newCard" control={<Radio />} label="New Card" />
+                        </RadioGroup>
+                    </FormControl>
+                    {error && <Typography variant="subtitle1" color="secondary">{error}</Typography>}
+                    {selectedCard === "newCard" && <CardElement className={classes.cardContainer} options={cardStyle} onChange={handleChange} />}
+                    <Button className={classes.submitButton} type="submit" variant="contained" color="primary" disabled={processing || (error !== "")}>
+                        Upload and Pay
+                    </Button>
+                </form>
+            </Paper>
+            <Dialog open={open} onClose={() => setOpen(false)} disableBackdropClick disableEscapeKeyDown>
+                <DialogTitle>Refund Payment?</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        Your file upload failed, please try again. Would you like to refund your payment?
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button color="primary" variant="contained" onClick={handleCloseRefund} disabled={processing}>No</Button>
+                    <Button color="primary" variant="contained" onClick={handleRefund} disabled={processing}>Yes</Button>
+                </DialogActions>
+            </Dialog>
+        </>
     );
 }
 

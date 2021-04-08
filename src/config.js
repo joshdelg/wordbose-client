@@ -2,7 +2,8 @@ const dev = {
   STRIPE_KEY: "pk_test_51HFB3hDCRuX8vF0ZAk8LZZxDyJdaqwGbSS0ugMcIIvAgoZxPu47YN3kOuKgP1ZfFkK7GKt3AbZIHT28oA5HbFocX00HiejHI65",
   s3: {
     REGION: "us-west-2",
-    BUCKET: "wordbose-api-dev-uploadsbucket-8oezia2yipgi"
+    // ! Change Bucket to Fail Upload
+    BUCKET: "boa-wordbose-api-dev-uploadsbucket-8oezia2yipgi"
   },
   apiGateway: {
     REGION: "us-west-2",
@@ -13,7 +14,8 @@ const dev = {
     USER_POOL_ID: "us-west-2_QtOUvQEWA",
     APP_CLIENT_ID: "7ph9it37n76jjga3qcn6e8lkqb",
     IDENTITY_POOL_ID: "us-west-2:5ff59f07-fbf1-47f5-8f68-10d238126a81"
-  }
+  },
+  DURATION_FREE_THRESHOLD: (0 * 60), // ! 15 mins default, changed for testing
 };
 
 const prod = {
@@ -31,7 +33,8 @@ const prod = {
     USER_POOL_ID: "us-west-2_PQVNZPViH",
     APP_CLIENT_ID: "61q2kor0tctsolh175ujsture1",
     IDENTITY_POOL_ID: "us-west-2:52014f31-1a2f-4762-8470-c07b3fb84d91"
-  }
+  },
+  DURATION_FREE_THRESHOLD: (15 * 60), // 15 mins
 };
 
 const config = process.env.REACT_APP_STAGE === 'prod'
@@ -42,6 +45,5 @@ export default {
   // Common config values
   TRANSCRIPT_CARD_TRUNCATION: 160,
   MAX_FILE_DURATION: (4 * 60 * 60), // 4 Hours
-  DURATION_FREE_THRESHOLD: (15 * 60), // 15 mins
   ...config
 };

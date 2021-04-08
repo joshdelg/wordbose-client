@@ -36,6 +36,7 @@ export function onError(error) {
 
 export function logError(error, errorInfo = null) {
     if(isLocal) {
+        console.log(error);
         return;
     }
 
