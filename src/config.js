@@ -2,8 +2,7 @@ const dev = {
   STRIPE_KEY: "pk_test_51HFB3hDCRuX8vF0ZAk8LZZxDyJdaqwGbSS0ugMcIIvAgoZxPu47YN3kOuKgP1ZfFkK7GKt3AbZIHT28oA5HbFocX00HiejHI65",
   s3: {
     REGION: "us-west-2",
-    // ! Change Bucket to Fail Upload
-    BUCKET: "boa-wordbose-api-dev-uploadsbucket-8oezia2yipgi"
+    BUCKET: "wordbose-api-dev-uploadsbucket-8oezia2yipgi"
   },
   apiGateway: {
     REGION: "us-west-2",
@@ -15,7 +14,7 @@ const dev = {
     APP_CLIENT_ID: "7ph9it37n76jjga3qcn6e8lkqb",
     IDENTITY_POOL_ID: "us-west-2:5ff59f07-fbf1-47f5-8f68-10d238126a81"
   },
-  DURATION_FREE_THRESHOLD: (0 * 60), // ! 15 mins default, changed for testing
+  DURATION_FREE_THRESHOLD: (15 * 60),
 };
 
 const prod = {

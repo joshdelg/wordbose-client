@@ -146,7 +146,6 @@ function PaymentForm(props) {
                 setProcessing(false);
             } else {
                 alert("Your file is now being uploaded. You will be redirected when this is complete.");
-                console.log("ID at upload is", paymentId);
                 try {
                     // Upload files from new transcript form
                     await props.uploadFile();
@@ -170,7 +169,6 @@ function PaymentForm(props) {
     const handleRefund = async () => {
         try {
             setProcessing(true);
-            console.log("refunded client secret", paymentId);
             const refund = await API.post("transcripts", "/refund", {
                 body: {
                     paymentId: paymentId
